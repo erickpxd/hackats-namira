@@ -64,6 +64,84 @@ class WebConsoleStopTests(unittest.TestCase):
                 self.assertTrue(any(item["phase"] == "stop" for item in snapshot["events"]))
 
 
+class WebConsoleHistoryTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.reports = self.root / "reports"
+        self.reports.mkdir()
+        config = self.root / "scope.json"
+        config.write_text(json.dumps({"target_url": "https://example.org/",
+                                      "allowed_hosts": ["example.org"]}), encoding="utf-8")
+        patcher = patch("pentest_pipeline.web_server.REPORTS", self.reports)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.console = CampaignConsole(config)
+        self.server = ConsoleHTTPServer(("127.0.0.1", 0), self.console)
+        self.worker = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.worker.start()
+        self.addCleanup(self.close_server)
+
+    def close_server(self):
+        self.server.shutdown()
+        self.server.server_close()
+        self.worker.join(timeout=3)
+
+    def get(self, path):
+        connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port, timeout=3)
+        try:
+            connection.request("GET", path)
+            response = connection.getresponse()
+            return response.status, json.loads(response.read())
+        finally:
+            connection.close()
+
+    def save(self, run_id, date, filename="evidence.json"):
+        payload = _StoppedResult().to_dict()
+        payload.update(run_id=run_id, started_at=date, target=f"https://{run_id}.example.org/")
+        directory = self.reports / run_id
+        directory.mkdir()
+        (directory / filename).write_text(json.dumps(payload), encoding="utf-8")
+        return payload
+
+    def test_history_orders_saved_runs_and_opens_exact_result_without_changing_live_state(self):
+        older = self.save("older", "2026-11-11T00:00:00+00:00", "result.json")
+        self.save("newer", "2026-11-12T00:00:00+00:00")
+        status, history = self.get("/api/history")
+        self.assertEqual(status, 200)
+        self.assertEqual([item["run_id"] for item in history["runs"]], ["newer", "older"])
+        self.assertEqual(history["warnings"], [])
+        self.assertEqual(history["runs"][0]["findings_count"], 0)
+        self.console.running = True
+        self.console.result = {"run_id": "live"}
+        status, detail = self.get("/api/history/older")
+        self.assertEqual(status, 200)
+        self.assertEqual(detail["result"], older)
+        self.assertTrue(self.console.running)
+        self.assertEqual(self.console.result, {"run_id": "live"})
+
+    def test_history_rejects_missing_and_traversal_paths(self):
+        self.assertEqual(self.get("/api/history")[1]["runs"], [])
+        for path in ("missing", "../scope", "%2e%2e%2f.env", "older/result.json"):
+            with self.subTest(path=path):
+                self.assertEqual(self.get(f"/api/history/{path}")[0], 404)
+
+    def test_history_surfaces_unreadable_report_without_hiding_valid_runs(self):
+        self.save("valid", "2026-11-12T00:00:00+00:00")
+        broken = self.reports / "broken"
+        broken.mkdir()
+        (broken / "evidence.json").write_text("{", encoding="utf-8")
+        malformed = self.save("malformed", 123)
+        status, history = self.get("/api/history")
+        self.assertEqual(status, 200)
+        self.assertEqual(len(history["runs"]), 1)
+        self.assertEqual(len(history["warnings"]), 2)
+        self.assertTrue(any("broken" in warning for warning in history["warnings"]))
+        self.assertEqual(self.get("/api/history/broken")[0], 500)
+        self.assertEqual(self.get(f"/api/history/{malformed['run_id']}")[0], 500)
+
+
 class WebConsoleInputTests(unittest.TestCase):
     def test_post_requires_authorization_and_ai_key_then_uses_submitted_url(self):
         secret = "sk-test-only-never-log"
@@ -260,6 +338,38 @@ class WebConsoleEvidenceTests(unittest.TestCase):
                     worker.join(timeout=3)
 
 
+class WebConsoleFrontendSeparationTests(unittest.TestCase):
+    def test_python_server_exposes_api_but_does_not_serve_frontend_assets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_file = root / "scope.json"
+            config_file.write_text(json.dumps({
+                "target_url": "https://4.migbot.com.br/",
+                "allowed_hosts": ["4.migbot.com.br"],
+            }), encoding="utf-8")
+
+            server = ConsoleHTTPServer(("127.0.0.1", 0), CampaignConsole(config_file))
+            worker = threading.Thread(target=server.serve_forever, daemon=True)
+            worker.start()
+            try:
+                def get(path):
+                    connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=3)
+                    connection.request("GET", path)
+                    response = connection.getresponse()
+                    result = (response.status, response.getheader("Content-Type"), response.read())
+                    connection.close()
+                    return result
+
+                self.assertEqual(get("/api/status")[0], 200)
+                for path in ("/", "/app.js", "/style.css", "/assets/app.js"):
+                    with self.subTest(path=path):
+                        self.assertEqual(get(path)[0], 404)
+            finally:
+                server.shutdown()
+                server.server_close()
+                worker.join(timeout=3)
+
+
 class WebConsoleApprovalTests(unittest.TestCase):
     def test_conditional_action_waits_for_local_approval_and_is_audited(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -367,30 +477,6 @@ class WebConsoleLoadedReportTests(unittest.TestCase):
                     server.shutdown()
                     server.server_close()
                     worker.join(timeout=3)
-
-
-class WebConsolePresentationTests(unittest.TestCase):
-    def test_icons_have_semantic_svg_sources_and_no_ambiguous_glyphs(self):
-        root = Path(__file__).resolve().parents[1]
-        html = (root / "web" / "index.html").read_text(encoding="utf-8")
-        script = (root / "web" / "app.js").read_text(encoding="utf-8")
-        self.assertIn('data-icon="history"', html)
-        self.assertIn('data-icon="shield-check"', html)
-        self.assertIn("const ICON_PATHS", script)
-        for glyph in ("⌖", "◈", "✧", "◇", "▤", "⌘", "⌁", "◷", "◉"):
-            self.assertNotIn(glyph, html + script)
-
-    def test_summary_copy_and_responsive_overflow_guards_are_present(self):
-        root = Path(__file__).resolve().parents[1]
-        script = (root / "web" / "app.js").read_text(encoding="utf-8")
-        styles = (root / "web" / "style.css").read_text(encoding="utf-8")
-        self.assertIn('metricTile("ALTA CONFIANÇA"', script)
-        self.assertIn('"resultados que exigem contexto"', script)
-        self.assertIn(".phase-copy{display:flex;flex:1", styles)
-        self.assertIn('history.scrollRestoration = "manual"', script)
-        self.assertIn("scroll-margin-top:78px", styles)
-        self.assertIn("@media(max-width:380px)", styles)
-        self.assertIn(".tabs{overflow-x:auto}", styles)
 
 
 if __name__ == "__main__":

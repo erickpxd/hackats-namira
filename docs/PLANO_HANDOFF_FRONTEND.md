@@ -1,5 +1,9 @@
 # Plano de handoff — refatoração do console web por fases
 
+> **Documento histórico, substituído em 12/11/2026.** A interface vanilla em `web/` foi removida.
+> O frontend ativo é React/Vite em `frontend/`; `pentest_pipeline.web_server` serve somente a API.
+> As tarefas e invariantes abaixo descrevem a implementação anterior e não devem ser executadas.
+
 Documento para agentes (humanos ou Claude Code) continuarem o trabalho **sem acesso à sessão
 original**. Leia inteiro antes de tocar em qualquer arquivo. Tudo o que está aqui foi verificado no
 código em 12/11/2026, branch `erick.monteiro/frontend-melhorias`.
