@@ -1,130 +1,226 @@
-# Pentest com agentes — Hackathon Hubbits, Desafio 3
+<p align="center">
+  <img src="frontend/public/images/logo-horizontal.png" alt="NA MIRA" width="300">
+</p>
 
-Pipeline funcional e limitada para receber uma URL HTTPS autorizada, identificar o framework, testar superfícies públicas, registrar evidências, sugerir correções e detectar regressões. O escopo padrão está em [`backend/scope.json`](backend/scope.json): até **24 requisições GET/HEAD**, intervalo mínimo de 1 segundo, até três bundles JavaScript e 512 KiB por resposta. O fragmento `#/` é rota de navegador e não integra a requisição HTTP.
+# NA MIRA
 
-Veja o [plano das oito funcionalidades](docs/PLANO_FUNCIONALIDADES.md), a [análise multiagente por URL](docs/ANALISE_MULTIAGENTE.md) e os [resultados controlados de 12/11/2026](docs/RESULTADOS_2026-11-12.md). As evidências históricas da demonstração permanecem disponíveis; a análise multiagente usa somente os dados de cada campanha.
+**Análise de segurança assistida por IA, com execução rastreável e evidências antes de conclusões.**
 
-## Executar
+O Na Mira recebe uma URL HTTPS autorizada, identifica tecnologias, realiza verificações limitadas, pesquisa avisos de segurança e organiza hipóteses para revisão. A interface acompanha o trabalho dos agentes e permite consultar decisões, evidências, operações Docker e relatórios da mesma campanha.
 
-O código Python, sua configuração e seus testes ficam em `backend/`; o React/Vite fica em `frontend/`. Requer Python 3.11 ou superior; não há dependências Python obrigatórias. Execute os comandos abaixo a partir da pasta do backend. Para usar Amazon Bedrock, instale o extra opcional `pip install -e '.[bedrock]'`.
+Projeto desenvolvido para o **Hackathon Hubbits — Desafio 3**.
 
-```bash
-cd backend
-python3 -m pentest_pipeline scan --config scope.json
-python3 -m pentest_pipeline scan --config scope.json --target 'https://4.migbot.com.br//#/tokensale-ico-ea'
-python3 -m pentest_pipeline scan --config scope.json --target 'https://example.org/'
-python3 -m pentest_pipeline scan --config scope.json --approve-quoted-search
-python3 -m pentest_pipeline monitor --config scope.json --baseline reports/baseline.json
-python3 -m unittest discover -s tests -v
-```
+[Arquitetura atual](#arquitetura-atual) · [Arquitetura futura](#arquitetura-futura) · [Executar localmente](#executar-localmente) · [Demonstração auditável](#demonstração-auditável) · [Documentação](#documentação)
 
-O comando `scan` grava `evidence.json` e `report.md` em `reports/<run_id>/`. `monitor` cria o baseline na primeira execução e, nas seguintes, grava `diff.json` com achados novos, resolvidos, alterados e estáveis. Retorna código 2 quando há achado novo ou alterado; execução incompleta não é comparada nem substitui o baseline. Use `--update-baseline` somente depois de revisar o diff. `Ctrl+C` solicita parada; o evento de parada fica na trilha de auditoria. O par sintético de busca requer `--approve-quoted-search` no CLI; sem isso, o check é pulado e a cobertura fica inconclusiva.
-O monitor compara apenas execuções com o mesmo alvo, configuração de escopo e hash das regras de teste. Uma mudança no detector exige novo baseline revisado; não é interpretada como mudança no alvo.
+## O que funciona hoje
 
-O frontend React/Vite fica em `frontend/`; o servidor Python fornece somente a API local. Em um terminal, execute `cd backend && python3 -m pentest_pipeline.web_server --port 8765`; em outro, entre em `frontend/`, rode `npm install` e `npm run dev`. O Vite hospeda a interface e encaminha `/api` e `/evidence` ao backend local. Para testar o build de produção, rode `npm run build` e depois `npm run preview` dentro de `frontend/`; o preview do Vite também encaminha as rotas da API.
+- **Pipeline visual de oito etapas:** escopo, descoberta, planejamento, testes seguros, triagem, correção, análise multiagente e monitoramento.
+- **Orquestração V2:** catálogo de tarefas, scheduler com dependências, planejamento adaptativo e decisões registradas. Tarefas independentes podem executar em paralelo.
+- **Inteligência de vulnerabilidades:** inventário de tecnologias, pesquisa em NVD, OSV e CISA KEV e correlação por produto, ecossistema e versão. Falhas de fontes preservam resultados parciais.
+- **Laboratório Docker:** operações locais previamente registradas, autorização por política, comparações de versões e captura de saída dos processos.
+- **Validação independente:** Evidence Validator, Reflection Agent e DecisionValidator verificam evidências e revisam conclusões preservando o estado anterior.
+- **Observabilidade:** XAI, motivos de tarefas não realizadas, histórico de campanhas, checkpoints, hashes e relatórios Markdown/JSON.
+- **IA opcional:** integração com Amazon Bedrock e OpenAI. Os fluxos com fallback determinístico identificam sua origem; a IA não confirma vulnerabilidades.
+- **MITRE ATT&CK:** contextualização conservadora de observações, sem execução de técnicas de ataque.
 
-O console oferece páginas com navegação por fragmento: nova pesquisa (`#home`), acompanhamento (`#research`), achados (`#findings`), relatórios (`#reports`), configurações de IA (`#settings`), escopo (`#scope`) e testes salvos (`#test/<run_id>`). A home centraliza a marca, o campo de URL e dois botões quadrados: ferramentas (abre as configurações em modal, com fechamento por Escape) e pesquisar. O histórico abaixo da busca usa os relatórios locais, não dados do navegador; clicar num quadrado abre os insights, classificações, achados e recomendações daquela execução, sem iniciar outra pesquisa. A API lista até 50 pastas recentes em `/api/history` e retorna os dados de um teste em `/api/history/<run_id>`, aceitando `result.json` ou `evidence.json`. Arquivos inválidos geram avisos explícitos. A navegação preserva o rascunho e não interrompe campanhas.
+### Execução encerrada não significa análise completa
 
-No modal ou na página de configurações, selecione **OpenAI** ou **AWS Bedrock** e informe o modelo (aceita ID personalizado). OpenAI aceita chave em memória ou a configurada no servidor. Para Bedrock, informe a região e cole a **API key Amazon Bedrock** (bearer token) no campo **Chave do modelo**, abaixo da região. Não use AWS Access Key ID ou Secret Access Key nesse campo. Se ele ficar vazio, o backend usa `AWS_BEARER_TOKEN_BEDROCK` ou as credenciais AWS do servidor. Bedrock exige o extra opcional e as permissões descritas abaixo. Campos vazios de modelo/região usam os padrões do backend para o provedor escolhido. A chave fica somente em memória e é removida ao iniciar, trocar de provedor ou preparar nova pesquisa; ela não entra no relatório, nos eventos ou no Git. As configurações valem para a próxima pesquisa e ficam bloqueadas durante uma execução.
+Os estados operacionais, a completude da análise e a classificação de uma hipótese são apresentados separadamente:
 
-Ao pesquisar, a tela acompanha eventos e insights reais da API, ordenados do mais recente para o mais antigo, com opção de carregar registros anteriores. A triagem alimenta os contadores e rótulos de severidade em tempo real; os achados detalhados aparecem quando o resultado estiver disponível. O acompanhamento permite filtrar verificações, classificações e erros; os achados podem ser filtrados por severidade. Sinais inconclusivos permanecem distintos de observações confirmadas, que não provam exploração. A confirmação de autorização é solicitada antes de iniciar. A interface também permite interromper campanhas, decidir aprovações reais e baixar `/api/report.md` ou `/api/report.json` na página de relatórios. Durante uma nova execução, os downloads podem corresponder à última campanha salva: confira o alvo e o `run_id`. A fila de aprovação expira em cinco minutos; rejeição, expiração e interrupção não executam o par de busca. Cada requisição ainda passa pelas regras de escopo e volume.
+| Dimensão | Exemplo | Significado |
+| --- | --- | --- |
+| `execution_status` | `completed` | O fluxo operacional terminou. |
+| `assessment_status` | `partial` | Permanecem dados ausentes ou verificações sem conclusão. |
+| Classificação da hipótese | `potential`, `rejected`, `inconclusive` | Conclusão calculada a partir das evidências disponíveis. |
 
-A interface usa fundo branco e azul primário `#4a86ee`, com tons mais escuros para texto e contraste. A home exibe a imagem `frontend/public/images/logo-home.png`; mantenha as logos nessa pasta de origem, pois `frontend/dist/` é recriada pelo build. Os ícones dos controles e da navegação usam `lucide-react`, importados individualmente e com nomes acessíveis nos botões. O campo **Chave do modelo** permite mostrar/ocultar a API key do provedor selecionado (OpenAI ou Amazon Bedrock). As transições de página e interações são feitas em CSS e respeitam `prefers-reduced-motion`.
+Uma tarefa `skipped` pode ser uma decisão válida de elegibilidade, desde que seu motivo esteja acessível. Uma correspondência de versão é uma hipótese de aplicabilidade; **não comprova exploração nem comprometimento do alvo**.
 
-O agente multiagente analisa qualquer URL HTTPS pública autorizada usando o HTML, os scripts permitidos, o inventário de tecnologia e os resultados HTTP da própria campanha. O perfil genérico limita os testes a inventário de framework, cabeçalhos, cookies, `robots.txt` e `security.txt`; checks adicionais da demonstração só são habilitados no escopo configurado para aquele host. Fragmentos SPA são aceitos para navegação, mas removidos antes de qualquer requisição. URLs com credenciais, query, host privado ou esquema diferente de HTTPS são recusadas.
+## Arquitetura atual
 
-### Orientação opcional por IA
+O diagrama menor representa a arquitetura implementada: frontend React, API Python, Orchestrator V2, agentes especializados, políticas, validação de evidências, persistência e worker Python no Docker.
 
-```bash
-export OPENAI_API_KEY="..."
-export PENTEST_AI_MODEL="gpt-6-luna"  # opcional; este é o padrão
-python3 -m pentest_pipeline scan --config scope.json --ai
-# Para incluir o par sintético de busca no CLI, acrescente --approve-quoted-search.
-```
+[![Arquitetura atual do Na Mira: aplicação React e Python, orquestração, fontes de inteligência e worker Python isolado](docs/architecture/images/architecture-current.png)](docs/architecture/images/architecture-current.png)
 
-Com Amazon Bedrock, configure credenciais AWS com permissão `bedrock:InvokeModel`, instale o extra e escolha qualquer model ID, inference profile ID ou ARN compatível com a API Converse:
-
-```bash
-pip install -e '.[bedrock]'
-export PENTEST_AI_PROVIDER="bedrock"
-export PENTEST_BEDROCK_MODEL="amazon.nova-micro-v1:0"
-export AWS_REGION="us-east-1"
-python3 -m pentest_pipeline scan --config scope.json --ai
-
-# A mesma configuração também pode ser passada por argumentos:
-python3 -m pentest_pipeline scan --config scope.json --ai \
-  --ai-provider bedrock --ai-model amazon.nova-micro-v1:0 --aws-region us-east-1
-```
-
-Os papéis de planejamento, orientação e priorização funcionam nos dois provedores. OpenAI usa a Responses API com `store: false`; Bedrock usa a [API Converse](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html) do `bedrock-runtime`. A integração solicita [saída por JSON Schema](https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html) quando o modelo oferece esse recurso e faz fallback para JSON restrito, sempre com parsing, allowlists e validação local antes de usar a resposta. O planejador recebe origem e metadados HTTP sanitizados; o orientador recebe IDs, classificações e evidências resumidos de até dez achados; o revisor recebe somente IDs, checks, estados e severidades tipados, sem corpo de HTML, JavaScript ou resposta. O modelo não recebe ferramentas de rede, não altera a severidade, não confirma uma hipótese e não decide se uma CVE está confirmada. Se a IA falhar, as regras locais continuam e a falha é registrada sem expor credenciais. `.env` e `backend/reports/` são ignorados pelo Git.
-
-O inventário Angular lê, sem executar, até três JavaScripts públicos referenciados pelo HTML e procura um marcador de versão específico. Compara a versão a um catálogo **limitado** de advisories oficiais datado de 12/11/2026. Um CVE só é exibido como possível quando o pacote e a faixa de versão coincidem; exploração exige ainda verificar o código e as condições do aviso. Sem versão exata ou pacote confirmado, o resultado permanece inconclusivo. No alvo, o bundle indica Angular 22.2.2; não há CVE confirmada. Veja [a avaliação Angular](docs/ANGULAR_CVES.md).
-
-## Agentes e dados
-
-```mermaid
-flowchart LR
-    UI[Console web ou CLI] --> C[Coordenador]
-    C --> S[Agente de escopo]
-    S --> D[Agente de descoberta]
-    D --> P[IA escolhe checks permitidos]
-    P --> I[Inventário Angular e advisories]
-    I --> T[Agente de testes]
-    T --> H{Ação condicionada?}
-    H -->|sim| Q[Fila de aprovação]
-    Q -->|aprovada| G
-    Q -->|rejeitada ou expirada| E
-    T --> R[Agente de triagem]
-    R --> F[Agente de correção]
-    F --> A[IA opcional]
-    F --> MA[Análise local paralela]
-    MA --> TI[Inventário de tecnologia]
-    MA --> ER[Revisão das evidências]
-    MA --> HB[Hipóteses derivadas dos sinais]
-    TI & ER & HB --> CO[Consolidação com limites]
-    CO --> SA[IA priorizadora opcional]
-    R --> M[Agente monitor]
-    D & I & T --> G[Gateway HTTP limitado]
-    G --> AL[Host exato permitido]
-    C --> E[Eventos e relatório]
-```
-
-| Agente | Trabalho executável |
+| Componente | Responsabilidade |
 | --- | --- |
-| Escopo | Valida host, esquema, porta, método, caminhos, ritmo e orçamento antes da campanha. |
-| Descoberta | Lê a página inicial, até três bundles JavaScript e conta desafios de dificuldades 1 e 2 em `/api/Challenges` no host do laboratório. |
-| Inventário Angular | Identifica família e versão por marcadores específicos e cruza avisos do mantenedor sem inferir exploração. |
-| Planejamento por IA | Seleciona somente IDs opcionais permitidos; cabeçalhos, cookies e inventário sempre executam. |
-| Testes | Confere cabeçalhos e cookies; lê somente índices de `/ftp/`, formato de `/metrics` e compara `q=apple` com `q=apple%27` na busca. |
-| Triagem | Deduplica e atribui severidade, estado e confiança a cada evidência. |
-| Correção | Anexa dicas condicionais de configuração e código; não presume acesso ao repositório da aplicação. |
-| Análise multiagente do alvo | Três agentes locais executam em paralelo: inventariam a tecnologia observada, revisam a suficiência das evidências e formulam hipóteses limitadas aos sinais da campanha. A análise funciona para qualquer URL aceita pelo escopo. |
-| Priorização opcional por IA | Ordena hipóteses existentes para revisão humana. Não envia novas requisições ao alvo nem cria achados. |
-| Monitor | Compara duas execuções completas por identificador estável de achado. |
+| Frontend React | Pipeline, XAI, achados, hipóteses, verificações e relatórios. |
+| API Python | Iniciar e interromper campanhas; consultar status, histórico, evidências e relatórios. |
+| Orchestrator V2 | Organizar tarefas registradas e respeitar dependências, estados e prioridades. |
+| Agentes especializados | Descobrir tecnologias, pesquisar avisos, correlacionar dados, registrar hipóteses e selecionar verificações. |
+| PolicyEngine e escopo | Aplicar permissões, elegibilidade e limites antes da execução autorizada. |
+| Worker Python | Executar operações locais do catálogo fechado, em containers com isolamento e limites. |
+| Validação independente | Avaliar integridade, proveniência e suficiência; propor e validar revisões de classificação. |
+| Persistência | Conservar eventos, checkpoints, evidências e revisões para consulta posterior. |
 
-Os arquivos desta pasta implementam o **avaliador**, não o código da aplicação avaliada. As dicas de correção devem ser adaptadas à tecnologia do servidor real. A [análise multiagente](docs/ANALISE_MULTIAGENTE.md) registra seus sinais e hipóteses em `observations`, separados de `findings`; sinais passivos não demonstram exploração. Na demonstração, o erro SQLite da busca e o índice `/ftp/` têm [provas e limites próprios](docs/RESULTADOS_2026-11-12.md), preservados sem extrapolar para outras URLs. A captura histórica de `/ftp/` aparece nos novos relatórios da demo apenas se origem, rota e hash do arquivo corresponderem, com legenda que a separa da execução atual.
+O fluxo preserva a relação entre inventário, avisos, correlação, hipóteses, verificações, revisão e relatório. Uma resposta textual da IA não substitui o resultado do executor especializado.
 
-## Modelo de segurança
+## Arquitetura futura
 
-- O transporte central aceita apenas `GET` e `HEAD`, valida host exato, HTTPS e porta, bloqueia endereços privados por padrão e **não segue redirecionamentos**. Scripts de outros hosts são recusados. A campanha não baixa arquivos listados em `/ftp/`; verifica por `HEAD` somente os nomes previstos e realmente anunciados pelo índice.
-- A fila executa somente checks declarados. Não há força bruta, exploração SQL, injeção adicional, exfiltração, alteração de estado ou aumento automático de profundidade. Credenciais privilegiadas e ações ativas exigem aprovação humana e implementação específica.
-- O limite de requisições, o intervalo, o timeout e o teto de corpo estão em `backend/scope.json`. Corpos são analisados em memória e descartados; o log guarda status, metadados limitados e hash SHA-256. URLs são registradas sem query e valores de cookies não são persistidos. A evidência cita somente os dois valores sintéticos usados no teste de busca.
-- Cada decisão, requisição, resposta, teste, classificação, orientação e parada produz evento com horário UTC. Estados dos achados: `confirmed` para observação reproduzida, `inconclusive` para sinal que precisa de contexto e `discarded` quando uma hipótese for examinada e refutada. Se faltar cobertura de um teste declarado, a campanha fica `inconclusive`; o monitor só compara campanhas `completed`.
-- Ausência de cabeçalho indica configuração a revisar, não prova exploração. A diferença 200/500 com `SQLITE_ERROR` indica erro SQL exposto e entrada mal tratada; não comprova extração, bypass ou SQL injection explorável.
-- As hipóteses da análise multiagente são derivadas apenas dos sinais desta campanha e permanecem separadas dos achados HTTP. A IA só prioriza revisão futura. Os agentes paralelos não abrem conexões: as requisições permanecem sequenciais no gateway limitado.
-- Respostas HTTP e JavaScript do alvo são dados não confiáveis: não viram instruções para a IA ou para o executor. Evidência de diretório requer marcador de índice e MIME HTML; métricas exigem formato Prometheus; `HEAD 403` não vira vazamento. Conteúdo de SPA que responde 200 em qualquer rota fica inconclusivo quando faltam os marcadores esperados. Consulte [a análise de `/ftp`](docs/FTP_ANALISE.md) e [a avaliação de prompt injection](docs/PROMPT_INJECTION.md).
+O diagrama maior representa a **visão de evolução**, não uma declaração de que todas as integrações mostradas já estão disponíveis.
 
-## API para integração
+[![Visão futura do Na Mira: núcleo multiagente, observabilidade, inteligência externa e laboratório com workers Python e Kali](docs/architecture/images/architecture-future.png)](docs/architecture/images/architecture-future.png)
 
-```python
-from threading import Event
-from pentest_pipeline import ScopeConfig, run_scan, render_markdown, compare_runs
+A evolução proposta amplia o laboratório autorizado com cenários reproduzíveis e um **worker Kali dedicado a verificações locais não destrutivas**, sempre limitado a um catálogo fechado de operações e às decisões de política. Também prevê ampliar a integração de inteligência MITRE com o fluxo de investigação.
 
-config = ScopeConfig.from_file("scope.json")
-stop_event = Event()
-result = run_scan(config, stop_event=stop_event, on_event=lambda event: print(event))
-snapshot = result.to_dict()  # JSON serializável; run_scan não grava arquivos
-markdown = render_markdown(result)
+Orchestrator V2, planejamento, Event Store, validação independente, relatórios e contextualização MITRE já fazem parte do projeto atual. Sua presença no desenho futuro mostra como esses componentes se integram à evolução planejada.
+
+**O worker Kali desse desenho ainda não faz parte da execução demonstrada.** Hoje, a PoC executa workers Python no Docker e comparações locais de dados; não demonstra execução de técnicas MITRE ou exploração no Kali.
+
+## Executar localmente
+
+### Requisitos e instalação
+
+- Python **3.11 ou superior**.
+- Node.js **22 ou superior** e npm para o frontend e o harness de navegador.
+- Docker Engine acessível ao usuário que executa a API e o seed.
+- Credenciais de um provedor para novas varreduras com IA pela interface. **A demonstração auditável funciona sem credenciais externas.**
+
+Clone o [repositório](https://github.com/erickpxd/hackats-namira) e execute na raiz:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -e './backend[bedrock]'
+npm --prefix frontend ci
+docker build --network=none -f backend/Dockerfile.worker -t namira/worker:local backend
 ```
 
-O evento tem `timestamp`, `type`, `phase` e `message`, além de metadados seguros para a fase. `result` contém `run_id`, `status`, `stop_reason`, `findings`, `observations`, `recommendations`, `actions` e `summary`. Cada achado inclui trecho sanitizado, prova, limite, reprodução controlada e, quando houver captura direta pertinente, caminho local e hash da imagem. O plano por etapa registra hipótese, ação, resultado esperado e condição de parada antes do check.
+A instalação editable mantém as fixtures e os caminhos do projeto disponíveis. A imagem base `python:3.12-slim` precisa estar disponível ou ser obtida durante o build. A execução dos workers usa rede desligada.
+
+### Ambiente e API
+
+Use [`backend/.env.example`](backend/.env.example) como referência e crie seu `backend/.env` privado, preservando qualquer configuração existente. Preencha as credenciais reais somente nesse arquivo ou no ambiente do processo. Não use variáveis `VITE_*` para segredos.
+
+**O Python não carrega `.env` automaticamente.** Em um terminal Bash, na raiz:
+
+```bash
+set -a
+. backend/.env
+set +a
+.venv/bin/python -m pentest_pipeline.web_server --port 8765
+```
+
+A API fica em `http://127.0.0.1:8765`. Os flags estão documentados no arquivo de exemplo: `PENTEST_ORCHESTRATOR=v2`, `PENTEST_CVE_INTELLIGENCE=1`, `PENTEST_AI_PLANNING=1`, laboratório e validação independente habilitados. Nos dois flags com valor `1`, escrever `enabled` não ativa a funcionalidade.
+
+Para Bedrock, configure `AWS_BEARER_TOKEN_BEDROCK` ou use credenciais/role AWS autorizadas, além de modelo e região. O token Bedrock não é uma AWS Access Key ID. Para OpenAI, configure `OPENAI_API_KEY` e os seletores de provider correspondentes. O exemplo versionado não contém credenciais reais.
+
+### Frontend
+
+Em outro terminal, na raiz:
+
+```bash
+npm --prefix frontend run dev
+```
+
+Abra **[http://localhost:5173](http://localhost:5173)**. O Vite encaminha `/api` e `/evidence` para a API local.
+
+| Tela | Rota |
+| --- | --- |
+| Nova varredura e histórico | `/#home` |
+| Acompanhamento e XAI | `/#research` |
+| Achados | `/#findings` |
+| Verificações e hipóteses | `/#executions` |
+| Relatórios | `/#reports` |
+| Configuração do projeto | `/#settings` |
+| Campanha salva | `/#test/<run_id>` |
+
+## Demonstração auditável
+
+O seed cria **NA MIRA — Demonstração Auditável** pelo fluxo real de orquestração, com fixtures explicitamente identificadas e processos Docker reais.
+
+Com a imagem construída, execute na raiz:
+
+```bash
+env PENTEST_AI_PLANNING=0 PENTEST_AI_PLANNING_PROVIDER= PENTEST_REFLECTION_PROVIDER= .venv/bin/python -m pentest_pipeline.demo.seed_campaign --demo
+```
+
+Essas variáveis valem apenas para o processo do seed: mantêm a reflexão determinística e evitam chamadas a modelos externos. A configuração do serviço continua independente. O seed não consulta alvos externos.
+
+Cada execução cria um novo `run_id`, preserva tentativas anteriores e gera:
+
+- **Quatro workers Docker reais:** diagnóstico do ambiente e três comparações.
+- Saídas de comandos fixos: versão do Python, usuário, sistema e SHA-256 da fixture.
+- Casos `supported`, `contradicted` e `inconclusive`, com hipóteses `potential`, `rejected` e `inconclusive`.
+- Revisão **suspected → rejected**, com estado anterior preservado.
+- Rejeição de operação desconhecida antes de criar worker.
+- Resultado **`completed` para execução e `partial` para análise**.
+
+Abra `http://localhost:5173/#test/<run_id>` usando o ID retornado pelo comando. Em **Verificações e hipóteses desta campanha**, abra uma operação e depois **Saída real do processo** para consultar stdout e stderr. A visualização é somente leitura; IDs e hashes ficam nos detalhes de auditoria.
+
+Relatório, manifesto e dados ficam em `backend/reports/<run_id>/`. Checkpoints e capturas ficam em `backend/reports/checkpoints/` e `backend/reports/worker-captures/`. A API e o seed devem acessar esses mesmos diretórios, com permissões do usuário do serviço.
+
+Consulte o [relatório da demonstração validada](docs/architecture/auditable-demo-report.md) e o [manifesto com IDs, revisões e hashes](docs/architecture/auditable-demo-manifest.json). São registros de uma execução local anterior, não resultados de um novo deploy.
+
+## Segurança e limites
+
+- Varreduras exigem escopo autorizado. O transporte limita origem, métodos, volume, intervalo, timeout e tamanho das respostas; endereços privados são bloqueados por padrão e redirecionamentos não são seguidos.
+- As regras da campanha ficam em [`backend/scope.json`](backend/scope.json). A IA não amplia o escopo nem envia comandos arbitrários ao worker.
+- Workers usam rede `none`, usuário não root, filesystem read-only, `cap-drop ALL`, `no-new-privileges`, tmpfs limitada e limites de CPU, memória, processos e tempo. O socket Docker não é montado dentro deles.
+- Saídas capturadas têm limite, redação de campos sensíveis, sanitização e hash do registro sanitizado. A retenção padrão é de sete dias, configurável por `PENTEST_CAPTURE_RETENTION_DAYS`.
+- Fontes indisponíveis, versão desconhecida e dados insuficientes permanecem explícitos. Ausência de evidência não é prova de ausência de vulnerabilidades.
+- Contextualização MITRE, correlação de versões e conclusão de tarefas não comprovam exploração ou comprometimento.
+
+## Validação
+
+Baseline registrado em **13/11/2026**:
+
+| Verificação | Resultado |
+| --- | --- |
+| Suíte Python com Docker real habilitado | **348 aprovados, zero falhas e zero pulados** |
+| Build do frontend | Aprovado |
+| Navegador — demonstração auditável | 15 verificações aprovadas |
+| Navegador — regressão da Fase 7 | 18 verificações aprovadas |
+
+Para repetir a suíte, use um terminal sem as flags do serviço carregadas e execute dentro de `backend/`:
+
+```bash
+PENTEST_DOCKER_IT=1 ../.venv/bin/python -m unittest discover -s tests -q
+```
+
+Na raiz, com a API ativa e o seed gerado:
+
+```bash
+npm --prefix frontend run build
+node tools/e2e-web/run_phase65.mjs --demo-run ID_DA_CAMPANHA
+node tools/e2e-web/run_phase65.mjs --phase7
+```
+
+O harness de navegador exige Chrome disponível. Os resultados completos estão nos [registros de testes](docs/architecture/auditable-demo-tests.json), [aceite da demo](docs/architecture/auditable-demo-browser.json) e [aceite da Fase 7](docs/architecture/phase7-browser-acceptance.json).
+
+## Estrutura do repositório
+
+```text
+backend/
+  pentest_pipeline/
+    orchestration/   # Registro, scheduler, DAG, eventos e projeções
+    intelligence/    # Tecnologias, fontes, correlação e hipóteses
+    execution/       # Políticas, laboratório, Docker e captura
+    validation/      # Evidências, reflexão e decisões
+    planning/        # Planejamento adaptativo
+    persistence/     # Checkpoints
+    mitre/           # Contextualização ATT&CK
+    demo/            # Fixtures e seed auditável
+  tests/
+  Dockerfile.worker
+  .env.example
+frontend/            # React, Vite e componentes da interface
+docs/                # Arquitetura, auditorias e deploy
+tools/               # Verificações Docker e testes de navegador
+```
+
+## Documentação
+
+O deploy completo precisa de frontend estático, API persistente, Docker real e armazenamento durável para `backend/reports/`. Hospedar apenas o frontend não disponibiliza a execução dos agentes.
+
+O [prompt de deploy para o Kiro](docs/deploy/kiro-deploy-prompt.md) orienta a configuração do ambiente, credenciais privadas, proxy, serviço, persistência, execução do seed e validação da URL publicada.
+
+| Documento | Conteúdo |
+| --- | --- |
+| [Progresso da migração](docs/architecture/migration-progress.md) | Fases implementadas e resultados registrados. |
+| [Auditoria da orquestração e demo](docs/architecture/orchestration-auditable-demo.md) | Causas dos skips, correções, reprodução e limitações. |
+| [Plano do Orchestrator V2](docs/architecture/orchestrator-v2-plan.md) | Organização da orquestração. |
+| [Auditoria dos contratos da Fase 7](docs/architecture/phase7-contract-audit.md) | Validação independente e revisão de conclusões. |
+| [Verificações de navegador](tools/e2e-web/README.md) | Comandos e critérios de aceite da interface. |
+| [Análise multiagente](docs/ANALISE_MULTIAGENTE.md) | Contexto dos agentes e hipóteses. |
+| [Resultados históricos do desafio](docs/RESULTADOS_2026-11-12.md) | Evidências da demonstração original e seus limites. |
+
+Os comandos CLI `scan` e `monitor` continuam disponíveis para os fluxos legados. Consulte `.venv/bin/python -m pentest_pipeline --help` para as opções de execução.
