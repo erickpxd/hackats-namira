@@ -1,0 +1,350 @@
+{
+  "phase": "6.5",
+  "status": "completed",
+  "audited_at": "2026-11-13",
+  "scope": "Local fixtures only; target transport and advisory service substituted. Docker, policy, scheduler, persistence, API and React are real.",
+  "worker_image": {
+    "tag": "namira/worker:local",
+    "id": "sha256:7a81047353ebabac7be60a7eb930b6a8d362a863aa52d00db75db05d3e67ec47",
+    "architecture": "amd64"
+  },
+  "tests": {
+    "python": {
+      "passed": 255,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "docker_it": true
+    },
+    "real_docker_api_browser": {
+      "mode": "real-docker-and-api",
+      "passed": 11,
+      "checks": [
+        "real API lists all fixture campaigns without internal-directory warnings",
+        "real Docker/API/React: supported",
+        "real Docker/API/React: contradicted",
+        "real Docker/API/React: inconclusive",
+        "real Docker/API/React: failed",
+        "real Docker/API/React: unverified",
+        "server restart preserves executions, criteria, hypotheses and evidence",
+        "page reload shows the same real execution",
+        "real history mobile layout without overflow",
+        "eight pipeline cards preserved",
+        "no browser exceptions"
+      ],
+      "artifacts": "/tmp/namira-phase65-x6YWWk"
+    },
+    "ui_fixtures": {
+      "mode": "ui-fixtures",
+      "passed": 10,
+      "checks": [
+        "7 distinct execution states",
+        "completion remains inconclusive",
+        "evidence metadata visible",
+        "failure filter",
+        "unverified hypothesis not confirmed",
+        "mobile layout without overflow",
+        "reload retains backend records",
+        "saved campaign history",
+        "eight pipeline cards preserved",
+        "no browser exceptions"
+      ],
+      "artifacts": "/tmp/namira-phase65-eQv9T6"
+    },
+    "frontend_build": "passed"
+  },
+  "isolation_probe": {
+    "command": ".venv/bin/python tools/docker/verify_worker.py",
+    "uid": 65534,
+    "gid": 65534,
+    "no_new_privs": 1,
+    "seccomp": 2,
+    "cap_eff": 0,
+    "apparmor": "docker-default (enforce)",
+    "read_only": true,
+    "interfaces": [
+      "lo"
+    ],
+    "memory_max": "268435456",
+    "pids_max": "128",
+    "cpu_max": "100000 100000",
+    "docker_socket": false,
+    "tmp_noexec": true,
+    "cancelled_after_start": true,
+    "cleanup_confirmed": true
+  },
+  "cases": [
+    {
+      "scenario": "supported",
+      "campaign_id": "20261113T053942Z-701ed626",
+      "hypothesis_id": "20261113T053942Z-701ed626:tech:@angular/core:CVE-2099-6501",
+      "checkpoint_integrity_verified": true,
+      "execution": {
+        "campaign_id": "20261113T053942Z-701ed626",
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-660ef7e9c76e444398a8d8f7766d4a4c",
+        "hypothesis_id": "20261113T053942Z-701ed626:tech:@angular/core:CVE-2099-6501",
+        "agent_id": "laboratory_validation",
+        "operation_id": "correlate_local_version",
+        "execution_backend": "docker",
+        "worker_id": "lab-355274a892914c8988ed4e22421bac84",
+        "started_at": "2026-11-13T05:39:42.400965+00:00",
+        "finished_at": "2026-11-13T05:39:43.564065+00:00",
+        "duration_ms": 1163,
+        "execution_status": "completed",
+        "validation_status": "supported",
+        "evidence_refs": [
+          "20261113T053942Z-701ed626:framework_inventory",
+          "evidence:exec-660ef7e9c76e444398a8d8f7766d4a4c"
+        ],
+        "result_summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+        "selection_reason": "Comparar a versão observada com o aviso registrado para esta hipótese.",
+        "worker_responded": true,
+        "output_evidence_refs": [
+          "evidence:exec-660ef7e9c76e444398a8d8f7766d4a4c"
+        ],
+        "limitations": [
+          "Validação local de dados; não confirma vulnerabilidade no alvo."
+        ],
+        "authorization_status": "approved",
+        "decision_reason": "eligible_local_operation",
+        "cleanup_status": "completed"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-660ef7e9c76e444398a8d8f7766d4a4c",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "Angular",
+          "version": "14.0.0",
+          "certainty": "exact",
+          "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+          "campaign_id": "20261113T053942Z-701ed626",
+          "hypothesis_id": "20261113T053942Z-701ed626:tech:@angular/core:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-660ef7e9c76e444398a8d8f7766d4a4c",
+          "worker_id": "lab-355274a892914c8988ed4e22421bac84",
+          "operation_id": "correlate_local_version",
+          "validation_status": "supported",
+          "input_evidence_refs": [
+            "20261113T053942Z-701ed626:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "@angular/core",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "15.0.0"
+            }
+          ],
+          "sha256": "c47771399f85b8b89cd2076a719605911eba10d69f1f668605152bf1dad4bc4c"
+        }
+      ],
+      "checkpoint_matches_api": true,
+      "output_evidence_hashes_verified": true
+    },
+    {
+      "scenario": "contradicted",
+      "campaign_id": "20261113T053943Z-9568bb8d",
+      "hypothesis_id": "20261113T053943Z-9568bb8d:tech:@angular/core:CVE-2099-6501",
+      "checkpoint_integrity_verified": true,
+      "execution": {
+        "campaign_id": "20261113T053943Z-9568bb8d",
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-33d445503fd54040a3b0fd6a33d40876",
+        "hypothesis_id": "20261113T053943Z-9568bb8d:tech:@angular/core:CVE-2099-6501",
+        "agent_id": "laboratory_validation",
+        "operation_id": "correlate_local_version",
+        "execution_backend": "docker",
+        "worker_id": "lab-7bc155d3c00d411c8a22d6f1365a76f7",
+        "started_at": "2026-11-13T05:39:43.698185+00:00",
+        "finished_at": "2026-11-13T05:39:44.699872+00:00",
+        "duration_ms": 1001,
+        "execution_status": "completed",
+        "validation_status": "contradicted",
+        "evidence_refs": [
+          "20261113T053943Z-9568bb8d:framework_inventory",
+          "evidence:exec-33d445503fd54040a3b0fd6a33d40876"
+        ],
+        "result_summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+        "selection_reason": "Comparar a versão observada com o aviso registrado para esta hipótese.",
+        "worker_responded": true,
+        "output_evidence_refs": [
+          "evidence:exec-33d445503fd54040a3b0fd6a33d40876"
+        ],
+        "limitations": [
+          "Validação local de dados; não confirma vulnerabilidade no alvo."
+        ],
+        "authorization_status": "approved",
+        "decision_reason": "eligible_local_operation",
+        "cleanup_status": "completed"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-33d445503fd54040a3b0fd6a33d40876",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "Angular",
+          "version": "14.0.0",
+          "certainty": "exact",
+          "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+          "campaign_id": "20261113T053943Z-9568bb8d",
+          "hypothesis_id": "20261113T053943Z-9568bb8d:tech:@angular/core:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-33d445503fd54040a3b0fd6a33d40876",
+          "worker_id": "lab-7bc155d3c00d411c8a22d6f1365a76f7",
+          "operation_id": "correlate_local_version",
+          "validation_status": "contradicted",
+          "input_evidence_refs": [
+            "20261113T053943Z-9568bb8d:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "@angular/core",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "14.0.0"
+            }
+          ],
+          "sha256": "0b5b36545586f578150247cd5659c50788bdd33482be4606f0c590f2986572e7"
+        }
+      ],
+      "checkpoint_matches_api": true,
+      "output_evidence_hashes_verified": true
+    },
+    {
+      "scenario": "inconclusive",
+      "campaign_id": "20261113T053944Z-f711a524",
+      "hypothesis_id": "20261113T053944Z-f711a524:tech:angular:CVE-2099-6501",
+      "checkpoint_integrity_verified": true,
+      "execution": {
+        "campaign_id": "20261113T053944Z-f711a524",
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-a15067aa8e8a482fa655d70e70f06b0a",
+        "hypothesis_id": "20261113T053944Z-f711a524:tech:angular:CVE-2099-6501",
+        "agent_id": "laboratory_validation",
+        "operation_id": "correlate_local_version",
+        "execution_backend": "docker",
+        "worker_id": "lab-7cc5ddfc7bf744c2aaea09aa0ccb155a",
+        "started_at": "2026-11-13T05:39:44.814601+00:00",
+        "finished_at": "2026-11-13T05:39:45.780106+00:00",
+        "duration_ms": 965,
+        "execution_status": "completed",
+        "validation_status": "inconclusive",
+        "evidence_refs": [
+          "20261113T053944Z-f711a524:framework_inventory",
+          "evidence:exec-a15067aa8e8a482fa655d70e70f06b0a"
+        ],
+        "result_summary": "Identidade ou intervalo insuficiente",
+        "selection_reason": "Comparar a versão observada com o aviso registrado para esta hipótese.",
+        "worker_responded": true,
+        "output_evidence_refs": [
+          "evidence:exec-a15067aa8e8a482fa655d70e70f06b0a"
+        ],
+        "limitations": [
+          "Validação local de dados; não confirma vulnerabilidade no alvo."
+        ],
+        "authorization_status": "approved",
+        "decision_reason": "eligible_local_operation",
+        "cleanup_status": "completed"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-a15067aa8e8a482fa655d70e70f06b0a",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "AngularJS",
+          "version": null,
+          "certainty": "partial",
+          "summary": "Identidade ou intervalo insuficiente",
+          "campaign_id": "20261113T053944Z-f711a524",
+          "hypothesis_id": "20261113T053944Z-f711a524:tech:angular:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-a15067aa8e8a482fa655d70e70f06b0a",
+          "worker_id": "lab-7cc5ddfc7bf744c2aaea09aa0ccb155a",
+          "operation_id": "correlate_local_version",
+          "validation_status": "inconclusive",
+          "input_evidence_refs": [
+            "20261113T053944Z-f711a524:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "angular",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "15.0.0"
+            }
+          ],
+          "sha256": "7521652abbea99f0d113b2fd7d7ea5c8cdf33b8c901e339a43b8c2a0d712fc46"
+        }
+      ],
+      "checkpoint_matches_api": true,
+      "output_evidence_hashes_verified": true
+    },
+    {
+      "scenario": "failed",
+      "campaign_id": "20261113T053945Z-ee5820b0",
+      "hypothesis_id": "20261113T053945Z-ee5820b0:tech:@angular/core:CVE-2099-6501",
+      "checkpoint_integrity_verified": true,
+      "execution": {
+        "campaign_id": "20261113T053945Z-ee5820b0",
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-6742885149464d83b270a7749132bf9f",
+        "hypothesis_id": "20261113T053945Z-ee5820b0:tech:@angular/core:CVE-2099-6501",
+        "agent_id": "laboratory_validation",
+        "operation_id": "correlate_local_version",
+        "execution_backend": "docker",
+        "worker_id": "lab-22d05c67bdb24edb82a2e8a70f348ae1",
+        "started_at": "2026-11-13T05:39:45.895484+00:00",
+        "finished_at": "2026-11-13T05:39:46.884373+00:00",
+        "duration_ms": 989,
+        "execution_status": "failed",
+        "validation_status": "not_evaluated",
+        "evidence_refs": [
+          "20261113T053945Z-ee5820b0:framework_inventory"
+        ],
+        "result_summary": "Operação não produziu resultado válido.",
+        "selection_reason": "Comparar a versão observada com o aviso registrado para esta hipótese.",
+        "worker_responded": true,
+        "output_evidence_refs": [],
+        "limitations": [
+          "Validação local de dados; não confirma vulnerabilidade no alvo."
+        ],
+        "authorization_status": "approved",
+        "decision_reason": "eligible_local_operation",
+        "cleanup_status": "completed",
+        "error_code": "worker_operation_failed"
+      },
+      "output_evidence": [],
+      "checkpoint_matches_api": true,
+      "output_evidence_hashes_verified": false
+    },
+    {
+      "scenario": "unverified",
+      "campaign_id": "20261113T053946Z-e106241a",
+      "hypothesis_id": "20261113T053946Z-e106241a:tech:@angular/core:CVE-2099-6501",
+      "checkpoint_integrity_verified": true,
+      "executions": [],
+      "validation_status": "not_evaluated"
+    }
+  ],
+  "limitations": [
+    "A supported local version match does not confirm exploitation or applicability on a target.",
+    "Record SHA-256 checks integrity, not authenticity of the advisory.",
+    "Interrupted laboratory workers require manual review; automatic replay is not implemented.",
+    "Temporary raw artifacts may be removed by the host; rerun the documented harness to regenerate."
+  ],
+  "phase7_started": false
+}

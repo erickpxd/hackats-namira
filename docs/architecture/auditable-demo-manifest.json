@@ -1,0 +1,936 @@
+{
+  "demo_id": "namira-auditable-v1",
+  "campaign_id": "20261113T085045Z-61c83415",
+  "run_id": "20261113T085045Z-61c83415",
+  "started_at": "2026-11-13T08:50:45.416865+00:00",
+  "finished_at": "2026-11-13T08:50:49.494399+00:00",
+  "environment": "local Docker, network none, UID 65534",
+  "execution_backend": "docker",
+  "isolation_level": "container",
+  "image_id": "sha256:b1c30a4322d5f4f3d17f46ee06b354e0e3dfd8e5a6f75923168e9ebb82464411",
+  "fixture_set": "namira-auditable-v1",
+  "fixture_sha256": "ab83fae26bc5c09a4f9c6ab0ab1a58c7ad87921f116b37a32947276c91a14d35",
+  "agent_ids": [
+    "ai_advisor",
+    "ai_target_review",
+    "asset_fetch",
+    "check_selection",
+    "cve_correlation",
+    "cve_research",
+    "demo_advisory_detail",
+    "demo_environment",
+    "demo_policy_control",
+    "discovery",
+    "framework_inventory",
+    "header_cookie_checks",
+    "hypothesis_registration",
+    "independent_validation",
+    "laboratory_validation",
+    "remediation",
+    "scope",
+    "surface_checks",
+    "target_analysis",
+    "technology_normalization",
+    "triage"
+  ],
+  "task_ids": [
+    "scope",
+    "discovery",
+    "check_selection",
+    "asset_fetch",
+    "framework_inventory",
+    "surface_checks",
+    "header_cookie_checks",
+    "triage",
+    "remediation",
+    "target_analysis",
+    "ai_target_review",
+    "ai_advisor",
+    "technology_normalization",
+    "cve_research",
+    "cve_correlation",
+    "hypothesis_registration",
+    "demo_advisory_detail",
+    "demo_environment",
+    "demo_policy_control",
+    "laboratory_validation",
+    "independent_validation"
+  ],
+  "executions": [
+    {
+      "execution_id": "exec-222bd57b019847a286c60c8e050d4239",
+      "worker_id": "worker-d012c808cddc49e78dd797ef4125f304",
+      "operation_id": "inspect_demo_environment",
+      "execution_status": "completed",
+      "validation_status": "inconclusive",
+      "hypothesis_id": null,
+      "cleanup_status": "completed",
+      "terminal_capture": {
+        "container_name": "namira-worker-421c327924824bdebae43292031dc878",
+        "started_at": "2026-11-13T08:50:45.492434+00:00",
+        "finished_at": "2026-11-13T08:50:46.495191+00:00",
+        "exit_code": 0,
+        "duration_ms": 1002,
+        "command": [
+          "python",
+          "-I",
+          "-m",
+          "pentest_pipeline.execution.worker_entry"
+        ],
+        "execution_id": "exec-222bd57b019847a286c60c8e050d4239",
+        "worker_id": "worker-d012c808cddc49e78dd797ef4125f304",
+        "operation_id": "inspect_demo_environment",
+        "container_image": "namira/worker:local",
+        "result_status": "completed",
+        "cleanup_status": "completed",
+        "output_truncated": false,
+        "expires_at": "2026-11-20T08:50:46.519263+00:00",
+        "capture_format": "redacted_process_output_v1",
+        "evidence_hash": "32854135be529b768e05d7953b431aeeb9c8d157be1b21cc57c3e6155e11af96",
+        "capture_available": true
+      }
+    },
+    {
+      "execution_id": "exec-458298f3d8bc438ba2c871fbc3e5eea0",
+      "worker_id": "lab-b38bd2cb9a094410a0aec856b0db0621",
+      "operation_id": "correlate_fixture_version",
+      "execution_status": "completed",
+      "validation_status": "supported",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+      "cleanup_status": "completed",
+      "terminal_capture": {
+        "container_name": "namira-worker-eca58c58dbcf49fdb2ffd98894fbdffb",
+        "started_at": "2026-11-13T08:50:46.540819+00:00",
+        "finished_at": "2026-11-13T08:50:47.507661+00:00",
+        "exit_code": 0,
+        "duration_ms": 966,
+        "command": [
+          "python",
+          "-I",
+          "-m",
+          "pentest_pipeline.execution.worker_entry"
+        ],
+        "execution_id": "exec-458298f3d8bc438ba2c871fbc3e5eea0",
+        "worker_id": "lab-b38bd2cb9a094410a0aec856b0db0621",
+        "operation_id": "correlate_fixture_version",
+        "container_image": "namira/worker:local",
+        "result_status": "completed",
+        "cleanup_status": "completed",
+        "output_truncated": false,
+        "expires_at": "2026-11-20T08:50:47.534086+00:00",
+        "capture_format": "redacted_process_output_v1",
+        "evidence_hash": "a120a6e3956412e4427e9cb537e6b49620d2b627906e9555d836f376321df505",
+        "capture_available": true
+      }
+    },
+    {
+      "execution_id": "exec-59080b5162484367a21bab1a79b832b6",
+      "worker_id": "lab-b3564e89a00d4cd098abf46ee43525ce",
+      "operation_id": "correlate_fixture_version",
+      "execution_status": "completed",
+      "validation_status": "contradicted",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+      "cleanup_status": "completed",
+      "terminal_capture": {
+        "container_name": "namira-worker-2fd9c26ad35c4c38b65828c874752516",
+        "started_at": "2026-11-13T08:50:47.544860+00:00",
+        "finished_at": "2026-11-13T08:50:48.480126+00:00",
+        "exit_code": 0,
+        "duration_ms": 935,
+        "command": [
+          "python",
+          "-I",
+          "-m",
+          "pentest_pipeline.execution.worker_entry"
+        ],
+        "execution_id": "exec-59080b5162484367a21bab1a79b832b6",
+        "worker_id": "lab-b3564e89a00d4cd098abf46ee43525ce",
+        "operation_id": "correlate_fixture_version",
+        "container_image": "namira/worker:local",
+        "result_status": "completed",
+        "cleanup_status": "completed",
+        "output_truncated": false,
+        "expires_at": "2026-11-20T08:50:48.502490+00:00",
+        "capture_format": "redacted_process_output_v1",
+        "evidence_hash": "cc0eff05e33a52614748eda7fb6b13472437d084487d8ec76c3104f1fed9e338",
+        "capture_available": true
+      }
+    },
+    {
+      "execution_id": "exec-4f9b400fb436412a800555d80e0ff8a4",
+      "worker_id": "lab-bd1d457ffea34f13ba971ca1ddaaf8c1",
+      "operation_id": "correlate_fixture_version",
+      "execution_status": "completed",
+      "validation_status": "inconclusive",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+      "cleanup_status": "completed",
+      "terminal_capture": {
+        "container_name": "namira-worker-4819793c23574d0e8561b9a2d1c8406d",
+        "started_at": "2026-11-13T08:50:48.512777+00:00",
+        "finished_at": "2026-11-13T08:50:49.431850+00:00",
+        "exit_code": 0,
+        "duration_ms": 919,
+        "command": [
+          "python",
+          "-I",
+          "-m",
+          "pentest_pipeline.execution.worker_entry"
+        ],
+        "execution_id": "exec-4f9b400fb436412a800555d80e0ff8a4",
+        "worker_id": "lab-bd1d457ffea34f13ba971ca1ddaaf8c1",
+        "operation_id": "correlate_fixture_version",
+        "container_image": "namira/worker:local",
+        "result_status": "completed",
+        "cleanup_status": "completed",
+        "output_truncated": false,
+        "expires_at": "2026-11-20T08:50:49.453842+00:00",
+        "capture_format": "redacted_process_output_v1",
+        "evidence_hash": "201cdee2209515ec3661ff383b678e84c721296e1049b311a8e05afef79bf7eb",
+        "capture_available": true
+      }
+    }
+  ],
+  "evidence_refs": [
+    {
+      "evidence_id": "20261113T085045Z-61c83415:framework_inventory",
+      "title": "Inventário de framework",
+      "source": "framework_inventory",
+      "technology": null,
+      "version": null,
+      "certainty": "not_detected",
+      "summary": "Metadados derivados das respostas já coletadas; sem conteúdo bruto."
+    },
+    {
+      "evidence_id": "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0",
+      "title": "Resultado da verificação local",
+      "source": "laboratory",
+      "technology": "Demo Supported",
+      "version": "1.2.0",
+      "certainty": "exact",
+      "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+      "task_id": "laboratory_validation",
+      "execution_id": "exec-458298f3d8bc438ba2c871fbc3e5eea0",
+      "worker_id": "lab-b38bd2cb9a094410a0aec856b0db0621",
+      "operation_id": "correlate_fixture_version",
+      "validation_status": "supported",
+      "input_evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-supported"
+      ],
+      "vulnerability_id": "DEMO-ADVISORY-001",
+      "source_refs": [
+        "fixture-local"
+      ],
+      "criteria": [
+        {
+          "product": "demo-supported",
+          "ecosystem": "npm",
+          "introduced": "1.0.0",
+          "fixed": "2.0.0",
+          "versions": []
+        }
+      ],
+      "sha256": "3384a2b95bf2cb8a41c4645b232ab14c1675d64e1573bdc97562c966deec4d55",
+      "created_at": "2026-11-13T08:50:47.536159+00:00",
+      "normalized_name": "demo-supported",
+      "ecosystem": "npm"
+    },
+    {
+      "evidence_id": "evidence:exec-59080b5162484367a21bab1a79b832b6",
+      "title": "Resultado da verificação local",
+      "source": "laboratory",
+      "technology": "Demo Contradicted",
+      "version": "3.0.0",
+      "certainty": "exact",
+      "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+      "task_id": "laboratory_validation",
+      "execution_id": "exec-59080b5162484367a21bab1a79b832b6",
+      "worker_id": "lab-b3564e89a00d4cd098abf46ee43525ce",
+      "operation_id": "correlate_fixture_version",
+      "validation_status": "contradicted",
+      "input_evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-contradicted"
+      ],
+      "vulnerability_id": "DEMO-ADVISORY-002",
+      "source_refs": [
+        "fixture-local"
+      ],
+      "criteria": [
+        {
+          "product": "demo-contradicted",
+          "ecosystem": "npm",
+          "introduced": "1.0.0",
+          "fixed": "2.0.0",
+          "versions": []
+        }
+      ],
+      "sha256": "f361f884e8aa0cddb6d1986b417e45f742cdaf02dc5a7ae84ff7af7926d0457a",
+      "created_at": "2026-11-13T08:50:48.504566+00:00",
+      "normalized_name": "demo-contradicted",
+      "ecosystem": "npm"
+    },
+    {
+      "evidence_id": "evidence:exec-4f9b400fb436412a800555d80e0ff8a4",
+      "title": "Resultado da verificação local",
+      "source": "laboratory",
+      "technology": "Demo Unknown Version",
+      "version": null,
+      "certainty": "unknown",
+      "summary": "A versão do componente não foi identificada. Não é possível avaliar o intervalo afetado.",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+      "task_id": "laboratory_validation",
+      "execution_id": "exec-4f9b400fb436412a800555d80e0ff8a4",
+      "worker_id": "lab-bd1d457ffea34f13ba971ca1ddaaf8c1",
+      "operation_id": "correlate_fixture_version",
+      "validation_status": "inconclusive",
+      "input_evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-inconclusive"
+      ],
+      "vulnerability_id": "DEMO-ADVISORY-003",
+      "source_refs": [
+        "fixture-local"
+      ],
+      "criteria": [
+        {
+          "product": "demo-inconclusive",
+          "ecosystem": "npm",
+          "introduced": "1.0.0",
+          "fixed": "2.0.0",
+          "versions": []
+        }
+      ],
+      "sha256": "c881d6a9034c1a924bdd921415698095c1a1f6dc00bd77f39d51978ac1b50f7a",
+      "created_at": "2026-11-13T08:50:49.456025+00:00",
+      "normalized_name": "demo-inconclusive",
+      "ecosystem": "npm"
+    },
+    {
+      "evidence_id": "20261113T085045Z-61c83415:fixture:tech:demo-supported",
+      "title": "Inventário de framework",
+      "source": "framework_inventory",
+      "technology": "Demo Supported",
+      "version": "1.2.0",
+      "certainty": "exact",
+      "summary": "Metadados derivados das respostas coletadas."
+    },
+    {
+      "evidence_id": "20261113T085045Z-61c83415:fixture:tech:demo-contradicted",
+      "title": "Inventário de framework",
+      "source": "framework_inventory",
+      "technology": "Demo Contradicted",
+      "version": "3.0.0",
+      "certainty": "exact",
+      "summary": "Metadados derivados das respostas coletadas."
+    },
+    {
+      "evidence_id": "20261113T085045Z-61c83415:fixture:tech:demo-inconclusive",
+      "title": "Inventário de framework",
+      "source": "framework_inventory",
+      "technology": "Demo Unknown Version",
+      "version": null,
+      "certainty": "unknown",
+      "summary": "Metadados derivados das respostas coletadas."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "component_id": "tech:demo-supported",
+      "vulnerability_id": "DEMO-ADVISORY-001",
+      "title": "Aviso fictício — Demo Supported",
+      "description": "",
+      "correlation_status": "potentially_affected",
+      "confidence": "strong",
+      "evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-supported"
+      ],
+      "source_refs": [
+        "fixture-local"
+      ],
+      "applicability_conditions": [
+        "Produto do componente corresponde ao registro da fonte.",
+        "Versão 1.2.0 dentro de intervalo afetado."
+      ],
+      "limitations": [
+        "Conhecimento público correlacionado; não confirma a existência da falha no alvo sem validação adicional."
+      ],
+      "priority": "medium",
+      "created_at": "2026-11-13T08:50:45.476278+00:00",
+      "updated_at": "2026-11-13T08:50:45.476282+00:00",
+      "history": [
+        {
+          "at": "2026-11-13T08:50:45.476268+00:00",
+          "source": "fixture-local",
+          "status": "potentially_affected",
+          "confidence": "strong"
+        }
+      ],
+      "technology": "Demo Supported",
+      "version": "1.2.0",
+      "version_confidence": "exact"
+    },
+    {
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "component_id": "tech:demo-contradicted",
+      "vulnerability_id": "DEMO-ADVISORY-002",
+      "title": "Aviso fictício — Demo Contradicted",
+      "description": "",
+      "correlation_status": "candidate",
+      "confidence": "weak",
+      "evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-contradicted"
+      ],
+      "source_refs": [
+        "fixture-local"
+      ],
+      "applicability_conditions": [
+        "Produto do componente corresponde ao registro da fonte.",
+        "Produto compatível, porém sem intervalo de versão conclusivo."
+      ],
+      "limitations": [
+        "Conhecimento público correlacionado; não confirma a existência da falha no alvo sem validação adicional."
+      ],
+      "priority": "informational",
+      "created_at": "2026-11-13T08:50:45.476316+00:00",
+      "updated_at": "2026-11-13T08:50:45.476318+00:00",
+      "history": [
+        {
+          "at": "2026-11-13T08:50:45.476309+00:00",
+          "source": "fixture-local",
+          "status": "candidate",
+          "confidence": "weak"
+        }
+      ],
+      "technology": "Demo Contradicted",
+      "version": "3.0.0",
+      "version_confidence": "exact"
+    },
+    {
+      "hypothesis_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+      "campaign_id": "20261113T085045Z-61c83415",
+      "component_id": "tech:demo-inconclusive",
+      "vulnerability_id": "DEMO-ADVISORY-003",
+      "title": "Aviso fictício — Demo Unknown Version",
+      "description": "",
+      "correlation_status": "version_unknown",
+      "confidence": "weak",
+      "evidence_refs": [
+        "20261113T085045Z-61c83415:fixture:tech:demo-inconclusive"
+      ],
+      "source_refs": [
+        "fixture-local"
+      ],
+      "applicability_conditions": [
+        "Produto do componente corresponde ao registro da fonte.",
+        "Versão não identificada com precisão suficiente."
+      ],
+      "limitations": [
+        "Conhecimento público correlacionado; não confirma a existência da falha no alvo sem validação adicional."
+      ],
+      "priority": "informational",
+      "created_at": "2026-11-13T08:50:45.476340+00:00",
+      "updated_at": "2026-11-13T08:50:45.476342+00:00",
+      "history": [
+        {
+          "at": "2026-11-13T08:50:45.476336+00:00",
+          "source": "fixture-local",
+          "status": "version_unknown",
+          "confidence": "weak"
+        }
+      ],
+      "technology": "Demo Unknown Version",
+      "version": null,
+      "version_confidence": "unknown"
+    }
+  ],
+  "operational_controls": [
+    {
+      "type": "demo_policy_control",
+      "unknown_operation": "unknown-demo-operation",
+      "authorization_status": "denied",
+      "worker_created": false
+    }
+  ],
+  "revisions": [
+    {
+      "campaign_id": "20261113T085045Z-61c83415",
+      "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+      "subject_type": "hypothesis",
+      "title": "DEMO-ADVISORY-001",
+      "original_status": "potentially_affected",
+      "initial_status": "potential",
+      "current_status": "potential",
+      "revisions": [
+        {
+          "type": "conclusion_review",
+          "campaign_id": "20261113T085045Z-61c83415",
+          "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+          "subject_type": "hypothesis",
+          "title": "DEMO-ADVISORY-001",
+          "original_status": "potentially_affected",
+          "initial_status": "potential",
+          "validation": {
+            "validation_id": "ev-1bc47e03989a49d5b4acbcd425f7a6cc",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+            "subject_type": "hypothesis",
+            "status": "supported",
+            "integrity_status": "partial",
+            "evidence_fingerprint": "99442c2456daf02a961b341e041267ce20f4cb25b57884db3247d9cc8a187441",
+            "supporting_evidence_refs": [
+              "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+            ],
+            "contradicting_evidence_refs": [],
+            "missing_evidence_refs": [],
+            "invalid_evidence_refs": [],
+            "valid_evidence_refs": [
+              "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+            ],
+            "validation_rules": [
+              "legacy_unhashed_context"
+            ],
+            "limitations": [
+              "Integridade não autentica a origem nem confirma exploração no alvo.",
+              "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+              "Correlação de versão é local; hipótese não se torna finding confirmado."
+            ],
+            "sufficient_for_confirmation": false,
+            "created_at": "2026-11-13T08:50:49.471488+00:00"
+          },
+          "reflection": {
+            "reflection_id": "reflection-ac4fe497accd4dd6ae6a48cf1044d422",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+            "original_status": "potential",
+            "suggested_status": "potential",
+            "reasoning_summary": "Critérios registrados sustentam a observação dentro dos limites documentados.",
+            "evidence_refs": [
+              "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+            ],
+            "contradictions": [],
+            "missing_information": [],
+            "recommended_action": "none",
+            "recommended_task_id": null,
+            "decision_source": "deterministic",
+            "fallback_reason": null
+          },
+          "revision": {
+            "revision_id": "revision-89fe3ae252674bb0a253ebba7253f766",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+            "subject_type": "hypothesis",
+            "version": 1,
+            "previous_status": "potential",
+            "proposed_status": "potential",
+            "approved_status": "potential",
+            "accepted": true,
+            "reason": "Critérios independentes permitem a classificação proposta.",
+            "decision_source": "deterministic",
+            "evidence_refs": [
+              "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+            ],
+            "evidence_fingerprint": "99442c2456daf02a961b341e041267ce20f4cb25b57884db3247d9cc8a187441",
+            "validation_id": "ev-1bc47e03989a49d5b4acbcd425f7a6cc",
+            "reflection_id": "reflection-ac4fe497accd4dd6ae6a48cf1044d422",
+            "proposal_source": "deterministic",
+            "created_at": "2026-11-13T08:50:49.472171+00:00"
+          },
+          "revalidation": null,
+          "created_at": "2026-11-13T08:50:49.472319+00:00"
+        }
+      ],
+      "validation": {
+        "validation_id": "ev-1bc47e03989a49d5b4acbcd425f7a6cc",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+        "subject_type": "hypothesis",
+        "status": "supported",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "99442c2456daf02a961b341e041267ce20f4cb25b57884db3247d9cc8a187441",
+        "supporting_evidence_refs": [
+          "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+        ],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T08:50:49.471488+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-ac4fe497accd4dd6ae6a48cf1044d422",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-supported:DEMO-ADVISORY-001",
+        "original_status": "potential",
+        "suggested_status": "potential",
+        "reasoning_summary": "Critérios registrados sustentam a observação dentro dos limites documentados.",
+        "evidence_refs": [
+          "evidence:exec-458298f3d8bc438ba2c871fbc3e5eea0"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "deterministic",
+        "fallback_reason": null
+      },
+      "revalidation": null
+    },
+    {
+      "campaign_id": "20261113T085045Z-61c83415",
+      "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+      "subject_type": "hypothesis",
+      "title": "DEMO-ADVISORY-002",
+      "original_status": "candidate",
+      "initial_status": "suspected",
+      "current_status": "rejected",
+      "revisions": [
+        {
+          "type": "conclusion_review",
+          "campaign_id": "20261113T085045Z-61c83415",
+          "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+          "subject_type": "hypothesis",
+          "title": "DEMO-ADVISORY-002",
+          "original_status": "candidate",
+          "initial_status": "suspected",
+          "validation": {
+            "validation_id": "ev-b883e50eb13e46d3aa9127733cff6d04",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+            "subject_type": "hypothesis",
+            "status": "contradicted",
+            "integrity_status": "partial",
+            "evidence_fingerprint": "8eb27afa3dcca87cdeeb0757e0626a6fe2dcf20e050a29a67a23a6ba41e2a12c",
+            "supporting_evidence_refs": [],
+            "contradicting_evidence_refs": [
+              "evidence:exec-59080b5162484367a21bab1a79b832b6"
+            ],
+            "missing_evidence_refs": [],
+            "invalid_evidence_refs": [],
+            "valid_evidence_refs": [
+              "evidence:exec-59080b5162484367a21bab1a79b832b6"
+            ],
+            "validation_rules": [
+              "legacy_unhashed_context"
+            ],
+            "limitations": [
+              "Integridade não autentica a origem nem confirma exploração no alvo.",
+              "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+              "Correlação de versão é local; hipótese não se torna finding confirmado."
+            ],
+            "sufficient_for_confirmation": false,
+            "created_at": "2026-11-13T08:50:49.477041+00:00"
+          },
+          "reflection": {
+            "reflection_id": "reflection-2246b50bac644fc28d4bffebd22e5774",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+            "original_status": "suspected",
+            "suggested_status": "rejected",
+            "reasoning_summary": "A evidência válida contradiz a hipótese; possível falso positivo na conclusão anterior.",
+            "evidence_refs": [
+              "evidence:exec-59080b5162484367a21bab1a79b832b6"
+            ],
+            "contradictions": [
+              "evidence:exec-59080b5162484367a21bab1a79b832b6"
+            ],
+            "missing_information": [],
+            "recommended_action": "none",
+            "recommended_task_id": null,
+            "decision_source": "deterministic",
+            "fallback_reason": null
+          },
+          "revision": {
+            "revision_id": "revision-65647153c8ec4430861e87f4d0926abc",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+            "subject_type": "hypothesis",
+            "version": 1,
+            "previous_status": "suspected",
+            "proposed_status": "rejected",
+            "approved_status": "rejected",
+            "accepted": true,
+            "reason": "Critérios independentes permitem a classificação proposta.",
+            "decision_source": "deterministic",
+            "evidence_refs": [
+              "evidence:exec-59080b5162484367a21bab1a79b832b6"
+            ],
+            "evidence_fingerprint": "8eb27afa3dcca87cdeeb0757e0626a6fe2dcf20e050a29a67a23a6ba41e2a12c",
+            "validation_id": "ev-b883e50eb13e46d3aa9127733cff6d04",
+            "reflection_id": "reflection-2246b50bac644fc28d4bffebd22e5774",
+            "proposal_source": "deterministic",
+            "created_at": "2026-11-13T08:50:49.477605+00:00"
+          },
+          "revalidation": null,
+          "created_at": "2026-11-13T08:50:49.477773+00:00"
+        }
+      ],
+      "validation": {
+        "validation_id": "ev-b883e50eb13e46d3aa9127733cff6d04",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+        "subject_type": "hypothesis",
+        "status": "contradicted",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "8eb27afa3dcca87cdeeb0757e0626a6fe2dcf20e050a29a67a23a6ba41e2a12c",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [
+          "evidence:exec-59080b5162484367a21bab1a79b832b6"
+        ],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-59080b5162484367a21bab1a79b832b6"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T08:50:49.477041+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-2246b50bac644fc28d4bffebd22e5774",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-contradicted:DEMO-ADVISORY-002",
+        "original_status": "suspected",
+        "suggested_status": "rejected",
+        "reasoning_summary": "A evidência válida contradiz a hipótese; possível falso positivo na conclusão anterior.",
+        "evidence_refs": [
+          "evidence:exec-59080b5162484367a21bab1a79b832b6"
+        ],
+        "contradictions": [
+          "evidence:exec-59080b5162484367a21bab1a79b832b6"
+        ],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "deterministic",
+        "fallback_reason": null
+      },
+      "revalidation": null
+    },
+    {
+      "campaign_id": "20261113T085045Z-61c83415",
+      "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+      "subject_type": "hypothesis",
+      "title": "DEMO-ADVISORY-003",
+      "original_status": "version_unknown",
+      "initial_status": "inconclusive",
+      "current_status": "inconclusive",
+      "revisions": [
+        {
+          "type": "conclusion_review",
+          "campaign_id": "20261113T085045Z-61c83415",
+          "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+          "subject_type": "hypothesis",
+          "title": "DEMO-ADVISORY-003",
+          "original_status": "version_unknown",
+          "initial_status": "inconclusive",
+          "validation": {
+            "validation_id": "ev-5d0d0aa34498415083911bbc61398850",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+            "subject_type": "hypothesis",
+            "status": "insufficient_evidence",
+            "integrity_status": "partial",
+            "evidence_fingerprint": "6313c9873b352f7da88c9a6ce279c2ab57ba26c028d8c343f5cbe1878d21f3a2",
+            "supporting_evidence_refs": [],
+            "contradicting_evidence_refs": [],
+            "missing_evidence_refs": [],
+            "invalid_evidence_refs": [],
+            "valid_evidence_refs": [
+              "evidence:exec-4f9b400fb436412a800555d80e0ff8a4"
+            ],
+            "validation_rules": [
+              "legacy_unhashed_context",
+              "criterion_insufficient"
+            ],
+            "limitations": [
+              "Integridade não autentica a origem nem confirma exploração no alvo.",
+              "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+              "Correlação de versão é local; hipótese não se torna finding confirmado."
+            ],
+            "sufficient_for_confirmation": false,
+            "created_at": "2026-11-13T08:50:49.482975+00:00"
+          },
+          "reflection": {
+            "reflection_id": "reflection-1cd20ec1bded4ed283ca4381e8eb4533",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+            "original_status": "inconclusive",
+            "suggested_status": "inconclusive",
+            "reasoning_summary": "Faltam evidências verificáveis para determinar a conclusão.",
+            "evidence_refs": [
+              "evidence:exec-4f9b400fb436412a800555d80e0ff8a4"
+            ],
+            "contradictions": [],
+            "missing_information": [],
+            "recommended_action": "request_local_verification",
+            "recommended_task_id": "laboratory_validation",
+            "decision_source": "deterministic",
+            "fallback_reason": null
+          },
+          "revision": {
+            "revision_id": "revision-f79b8559f12949d6a90add2a8e3295a9",
+            "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+            "subject_type": "hypothesis",
+            "version": 1,
+            "previous_status": "inconclusive",
+            "proposed_status": "inconclusive",
+            "approved_status": "inconclusive",
+            "accepted": true,
+            "reason": "Critérios independentes permitem a classificação proposta.",
+            "decision_source": "deterministic",
+            "evidence_refs": [
+              "evidence:exec-4f9b400fb436412a800555d80e0ff8a4"
+            ],
+            "evidence_fingerprint": "6313c9873b352f7da88c9a6ce279c2ab57ba26c028d8c343f5cbe1878d21f3a2",
+            "validation_id": "ev-5d0d0aa34498415083911bbc61398850",
+            "reflection_id": "reflection-1cd20ec1bded4ed283ca4381e8eb4533",
+            "proposal_source": "deterministic",
+            "created_at": "2026-11-13T08:50:49.483427+00:00"
+          },
+          "revalidation": {
+            "task_id": "laboratory_validation",
+            "status": "rejected_for_current_campaign",
+            "executed": false,
+            "gates": {
+              "scope": true,
+              "budget": true,
+              "stop": true,
+              "catalog": true,
+              "policy": true,
+              "approvals": true,
+              "dependencies": true,
+              "plan_validator": false,
+              "replanning_policy": true
+            },
+            "reasons": [
+              "ja_concluida"
+            ],
+            "limitation": "Proposta registrada para revisão posterior; nenhuma tarefa foi adicionada ou repetida."
+          },
+          "created_at": "2026-11-13T08:50:49.483819+00:00"
+        }
+      ],
+      "validation": {
+        "validation_id": "ev-5d0d0aa34498415083911bbc61398850",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+        "subject_type": "hypothesis",
+        "status": "insufficient_evidence",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "6313c9873b352f7da88c9a6ce279c2ab57ba26c028d8c343f5cbe1878d21f3a2",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-4f9b400fb436412a800555d80e0ff8a4"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context",
+          "criterion_insufficient"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T08:50:49.482975+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-1cd20ec1bded4ed283ca4381e8eb4533",
+        "subject_id": "20261113T085045Z-61c83415:tech:demo-inconclusive:DEMO-ADVISORY-003",
+        "original_status": "inconclusive",
+        "suggested_status": "inconclusive",
+        "reasoning_summary": "Faltam evidências verificáveis para determinar a conclusão.",
+        "evidence_refs": [
+          "evidence:exec-4f9b400fb436412a800555d80e0ff8a4"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "request_local_verification",
+        "recommended_task_id": "laboratory_validation",
+        "decision_source": "deterministic",
+        "fallback_reason": null
+      },
+      "revalidation": {
+        "task_id": "laboratory_validation",
+        "status": "rejected_for_current_campaign",
+        "executed": false,
+        "gates": {
+          "scope": true,
+          "budget": true,
+          "stop": true,
+          "catalog": true,
+          "policy": true,
+          "approvals": true,
+          "dependencies": true,
+          "plan_validator": false,
+          "replanning_policy": true
+        },
+        "reasons": [
+          "ja_concluida"
+        ],
+        "limitation": "Proposta registrada para revisão posterior; nenhuma tarefa foi adicionada ou repetida."
+      }
+    }
+  ],
+  "report_id": "20261113T085045Z-61c83415/report.md",
+  "execution_status": "completed",
+  "assessment_status": "partial",
+  "provenance": {
+    "inputs": "fixture-local",
+    "events": "OrchestratorV2 / TaskScheduler",
+    "processes": "real Docker",
+    "conclusions": "EvidenceValidator / ReflectionAgent deterministic / DecisionValidator",
+    "ai_responses": "none",
+    "live_target_requests": 0
+  },
+  "limitations": [
+    "Inventário e avisos fictícios; nenhuma consulta a alvo externo.",
+    "Processos e comparações executados no Docker real. Sem Kali, exploit ou comprovação de vulnerabilidade.",
+    "Fallback determinístico: nenhuma resposta de IA foi gerada nesta demonstração.",
+    "Uma tecnologia não tem versão; a avaliação permanece parcial."
+  ],
+  "acceptance_errors": [],
+  "audit": {
+    "backend_tests": {
+      "passed": 348,
+      "failed": 0,
+      "skipped": 0,
+      "docker_opt_in": true
+    },
+    "frontend_build": "passed",
+    "capture_and_evidence_hashes": "verified",
+    "external_target_requests": 0,
+    "residual_workers": 0,
+    "browser": {
+      "demo": {
+        "passed": 15,
+        "report": "auditable-demo-browser.json"
+      },
+      "phase7": {
+        "passed": 18,
+        "report": "phase7-browser-acceptance.json"
+      }
+    },
+    "test_report": "auditable-demo-tests.json"
+  },
+  "repository": {
+    "branch": "main",
+    "base_revision": "8421b42",
+    "remote": "github.com/erickpxd/hackats-namira.git",
+    "working_tree": "pre-existing local changes preserved; no commit created"
+  }
+}

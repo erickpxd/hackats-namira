@@ -13,8 +13,8 @@ código em 12/11/2026, branch `erick.monteiro/frontend-melhorias`.
 | Item | Estado |
 | --- | --- |
 | `web/index.html`, `web/app.js`, `web/style.css` reescritos como SPA em 5 fases | **Feito, não commitado** (`git status`: 3 modificados) |
-| Backend (`pentest_pipeline/*`) | **Intocado** — e deve continuar assim |
-| `python3 -m unittest discover -s tests` | 71 testes, OK |
+| Backend (`backend/pentest_pipeline/*`) | **Intocado** — e deve continuar assim |
+| `cd backend && python3 -m unittest discover -s tests` | 71 testes, OK |
 | E2E controlado (`tools/e2e-web/`) | 93/93 asserções em 10 cenários, 0 erros de console; **arquivos novos, não rastreados** |
 | README | Ainda descreve o console antigo em um parágrafo (seção "Executar") |
 
@@ -66,11 +66,11 @@ Eventos reais que a UI consome: `stage_plan`, `decision` (com `check_ids/source/
 ## 3. Tarefas para agentes
 
 Cada tarefa é independente salvo onde indicado. Antes de começar qualquer uma: `git status` limpo
-exceto os 3 arquivos de `web/` (e os novos em `tools/e2e-web/`), `python3 -m unittest discover -s tests`
+exceto os 3 arquivos de `web/` (e os novos em `tools/e2e-web/`), `cd backend && python3 -m unittest discover -s tests`
 verde, E2E verde (comandos em `tools/e2e-web/README.md`).
 
 ### Tarefa A — Consolidar o harness E2E no repositório
-**Objetivo:** `tools/e2e-web/` reproduzível por qualquer pessoa sem `reports/` (que é gitignored).
+**Objetivo:** `tools/e2e-web/` reproduzível por qualquer pessoa sem `backend/reports/` (que é gitignored).
 **Passos:**
 1. Rodar `build_scenarios.py` com `docs/resultado-evidencia-detalhada.json` (fixture rastreado, 69
    ações, sem evento de aprovação pendente → o script sintetiza e marca `synthetic: true`).
@@ -111,13 +111,13 @@ mudanças de estado porque o render é pulado quando o JSON não muda — manter
 
 ### Tarefa E — Validação ao vivo (requer operador com autorização)
 **Objetivo:** a única coisa impossível de simular: eventos chegando em tempo real na fase 3.
-**Passos:** `python3 -m pentest_pipeline.web_server`, abrir `http://127.0.0.1:8765/`, iniciar uma
-campanha **apenas no alvo autorizado do `scope.json`**, e observar: transição configurar→planejamento
+**Passos:** `cd backend && python3 -m pentest_pipeline.web_server`, abrir `http://127.0.0.1:8765/`, iniciar uma
+campanha **apenas no alvo autorizado do `backend/scope.json`**, e observar: transição configurar→planejamento
 →execução sem clique; cartão do agente ativo muda a cada etapa; chips de concluídos acumulam;
 aprovação aparece no cartão (e como faixa ao navegar para outra fase); Negar e Aprovar; Parar no meio
 de uma etapa → "Parando" → "Interrompida" com etapas "não executadas" na análise; recarregar a página
 durante a execução **não** inicia outra campanha; ao terminar, vista vai para Análise sozinha.
-**Aceite:** checklist preenchido; divergências entre o que a UI mostra e `reports/<run_id>/result.json`
+**Aceite:** checklist preenchido; divergências entre o que a UI mostra e `backend/reports/<run_id>/result.json`
 anotadas como issues (prioridade: dados reais > interface).
 
 ### Tarefa F — Decisões pendentes para o dono do projeto (não executar sem resposta)
@@ -136,9 +136,9 @@ campaign console with real-state navigation`.
 ## 4. Como validar qualquer mudança (checklist de 2 minutos)
 ```bash
 node --check web/app.js
-python3 -m unittest discover -s tests 2>&1 | grep -E '^(Ran |OK|FAILED)'
+(cd backend && python3 -m unittest discover -s tests 2>&1 | grep -E '^(Ran |OK|FAILED)')
 # E2E: ver tools/e2e-web/README.md
-python3 -m pentest_pipeline.web_server --port 8799 &  # depois: curl -s localhost:8799/api/status | head -c 300 ; kill %1
+(cd backend && python3 -m pentest_pipeline.web_server --port 8799) &  # depois: curl -s localhost:8799/api/status | head -c 300 ; kill %1
 ```
 Checagem barata de consistência: todo `$("id")` em `app.js` deve existir em `index.html`
 (`grep -o '\$("[^"]*")' web/app.js | sort -u` vs `grep -o 'id="[^"]*"' web/index.html`).

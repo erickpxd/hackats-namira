@@ -1,0 +1,6 @@
+FROM python:3.12-slim
+COPY pentest_pipeline /usr/local/lib/python3.12/site-packages/pentest_pipeline
+USER 65534:65534
+WORKDIR /work
+ENTRYPOINT []
+CMD ["python", "-I", "-m", "pentest_pipeline.execution.worker_entry"]

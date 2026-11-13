@@ -1,0 +1,25 @@
+{
+  "mode": "phase7-real-docker-and-api",
+  "passed": 18,
+  "checks": [
+    "real API lists all fixture campaigns without internal-directory warnings",
+    "persisted reflection and decision visible: supported",
+    "real Docker/API/React: supported",
+    "persisted reflection and decision visible: contradicted",
+    "real Docker/API/React: contradicted",
+    "persisted reflection and decision visible: inconclusive",
+    "real Docker/API/React: inconclusive",
+    "persisted reflection and decision visible: failed",
+    "real Docker/API/React: failed",
+    "persisted reflection and decision visible: unverified",
+    "real Docker/API/React: unverified",
+    "server restart preserves executions, criteria, hypotheses and evidence",
+    "page reload shows the same real execution",
+    "page reload retains classification revision after server restart",
+    "real history mobile layout without overflow",
+    "eight pipeline cards preserved",
+    "XAI exposes persisted validation/reflection/decision after restart",
+    "no browser exceptions"
+  ],
+  "artifacts": "/tmp/namira-phase65-U3h2hV"
+}

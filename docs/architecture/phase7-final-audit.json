@@ -1,0 +1,614 @@
+{
+  "phase": "7",
+  "status": "completed",
+  "recorded_at": "2026-11-13T06:00:32.849807+00:00",
+  "baseline": {
+    "passed": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "tests": {
+    "python": {
+      "passed": 304,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "real_docker_enabled": true
+    },
+    "browser_phase7": {
+      "mode": "phase7-real-docker-and-api",
+      "passed": 18,
+      "checks": [
+        "real API lists all fixture campaigns without internal-directory warnings",
+        "persisted reflection and decision visible: supported",
+        "real Docker/API/React: supported",
+        "persisted reflection and decision visible: contradicted",
+        "real Docker/API/React: contradicted",
+        "persisted reflection and decision visible: inconclusive",
+        "real Docker/API/React: inconclusive",
+        "persisted reflection and decision visible: failed",
+        "real Docker/API/React: failed",
+        "persisted reflection and decision visible: unverified",
+        "real Docker/API/React: unverified",
+        "server restart preserves executions, criteria, hypotheses and evidence",
+        "page reload shows the same real execution",
+        "page reload retains classification revision after server restart",
+        "real history mobile layout without overflow",
+        "eight pipeline cards preserved",
+        "XAI exposes persisted validation/reflection/decision after restart",
+        "no browser exceptions"
+      ],
+      "artifacts": "/tmp/namira-phase65-Id4kHw"
+    },
+    "browser_phase65_real": {
+      "mode": "real-docker-and-api",
+      "passed": 11,
+      "checks": [
+        "real API lists all fixture campaigns without internal-directory warnings",
+        "real Docker/API/React: supported",
+        "real Docker/API/React: contradicted",
+        "real Docker/API/React: inconclusive",
+        "real Docker/API/React: failed",
+        "real Docker/API/React: unverified",
+        "server restart preserves executions, criteria, hypotheses and evidence",
+        "page reload shows the same real execution",
+        "real history mobile layout without overflow",
+        "eight pipeline cards preserved",
+        "no browser exceptions"
+      ],
+      "artifacts": "/tmp/namira-phase65-oMDRrt"
+    },
+    "browser_ui_fixtures": {
+      "mode": "ui-fixtures",
+      "passed": 10,
+      "checks": [
+        "7 distinct execution states",
+        "completion remains inconclusive",
+        "evidence metadata visible",
+        "failure filter",
+        "unverified hypothesis not confirmed",
+        "mobile layout without overflow",
+        "reload retains backend records",
+        "saved campaign history",
+        "eight pipeline cards preserved",
+        "no browser exceptions"
+      ],
+      "artifacts": "/tmp/namira-phase65-UMGfb1"
+    },
+    "frontend_build": "passed"
+  },
+  "worker_image": {
+    "tag": "namira/worker:local",
+    "id": "sha256:ecebf1cc3ad2b7e0dd0d37e0c4689692cdc99e346fe3a227b59dd670bf0d7028",
+    "architecture": "amd64"
+  },
+  "isolation": {
+    "controls_changed": false,
+    "runtime_reinstalled": false,
+    "previous_effective_probe": "phase65-final-audit.json",
+    "real_docker_executed_in_suite_and_browser_flow": true,
+    "leftover_workers": []
+  },
+  "scope": "Only local fixtures. Initial correlation and model responses controlled; Docker and independent evidence criteria are real.",
+  "cases": [
+    {
+      "scenario": "supported",
+      "campaign_id": "20261113T055939Z-4af5d30e",
+      "hypothesis_id": "20261113T055939Z-4af5d30e:tech:@angular/core:CVE-2099-6501",
+      "initial_status": "potential",
+      "current_status": "potential",
+      "checkpoint_integrity_verified": true,
+      "checkpoint_matches_api": true,
+      "execution": {
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-5a4c07646ebb40c2a15542e2e1b56a0b",
+        "worker_id": "lab-b14f6bab998f490893d8dab49355cd47",
+        "execution_backend": "docker",
+        "execution_status": "completed",
+        "validation_status": "supported",
+        "worker_responded": true,
+        "authorization_status": "approved",
+        "output_evidence_refs": [
+          "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b"
+        ]
+      },
+      "evidence_validation": {
+        "validation_id": "ev-ad15f47477fe46ada9c2887740c5e086",
+        "subject_id": "20261113T055939Z-4af5d30e:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "status": "supported",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "6de7e250473f8a8ea5f21eaa042f864197961bedd7d5f7297d1cee2f1b93ba27",
+        "supporting_evidence_refs": [
+          "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b"
+        ],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T05:59:40.291106+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-c2a05eb67fc64e9fb2a00d3895a82844",
+        "subject_id": "20261113T055939Z-4af5d30e:tech:@angular/core:CVE-2099-6501",
+        "original_status": "potential",
+        "suggested_status": "potential",
+        "reasoning_summary": "Proposta controlada da fixture, sujeita aos critérios independentes.",
+        "evidence_refs": [
+          "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "ai",
+        "fallback_reason": null
+      },
+      "revision": {
+        "revision_id": "revision-550f632a23fd4f979ee0942df446e176",
+        "subject_id": "20261113T055939Z-4af5d30e:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "version": 1,
+        "previous_status": "potential",
+        "proposed_status": "potential",
+        "approved_status": "potential",
+        "accepted": true,
+        "reason": "Critérios independentes permitem a classificação proposta.",
+        "decision_source": "deterministic",
+        "evidence_refs": [
+          "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b"
+        ],
+        "evidence_fingerprint": "6de7e250473f8a8ea5f21eaa042f864197961bedd7d5f7297d1cee2f1b93ba27",
+        "validation_id": "ev-ad15f47477fe46ada9c2887740c5e086",
+        "reflection_id": "reflection-c2a05eb67fc64e9fb2a00d3895a82844",
+        "proposal_source": "ai",
+        "created_at": "2026-11-13T05:59:40.292477+00:00"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-5a4c07646ebb40c2a15542e2e1b56a0b",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "Angular",
+          "version": "14.0.0",
+          "certainty": "exact",
+          "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+          "campaign_id": "20261113T055939Z-4af5d30e",
+          "hypothesis_id": "20261113T055939Z-4af5d30e:tech:@angular/core:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-5a4c07646ebb40c2a15542e2e1b56a0b",
+          "worker_id": "lab-b14f6bab998f490893d8dab49355cd47",
+          "operation_id": "correlate_local_version",
+          "validation_status": "supported",
+          "input_evidence_refs": [
+            "20261113T055939Z-4af5d30e:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "@angular/core",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "15.0.0"
+            }
+          ],
+          "sha256": "86dd1f231c5c7ea478b187c6cd098ebf63b1723d3c1c2ad9027ce16c2bcfed74",
+          "created_at": "2026-11-13T05:59:40.273990+00:00",
+          "normalized_name": "@angular/core",
+          "ecosystem": "npm"
+        }
+      ]
+    },
+    {
+      "scenario": "contradicted",
+      "campaign_id": "20261113T055940Z-8a1a59ce",
+      "hypothesis_id": "20261113T055940Z-8a1a59ce:tech:@angular/core:CVE-2099-6501",
+      "initial_status": "potential",
+      "current_status": "rejected",
+      "checkpoint_integrity_verified": true,
+      "checkpoint_matches_api": true,
+      "execution": {
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-0722ee535eb840e0b0ceb148b08d8d7a",
+        "worker_id": "lab-959addfb9c2247e3ae63c175455d2993",
+        "execution_backend": "docker",
+        "execution_status": "completed",
+        "validation_status": "contradicted",
+        "worker_responded": true,
+        "authorization_status": "approved",
+        "output_evidence_refs": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ]
+      },
+      "evidence_validation": {
+        "validation_id": "ev-15ac3c3fb99e471bb1f5df67880ae45e",
+        "subject_id": "20261113T055940Z-8a1a59ce:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "status": "contradicted",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "be2bb6bc3cc4a1c00381f486a5f2b1384948e10208dda2daf5876fa865c4f6d5",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T05:59:41.474735+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-d061e7c52c954520bb0762dd7e22e86e",
+        "subject_id": "20261113T055940Z-8a1a59ce:tech:@angular/core:CVE-2099-6501",
+        "original_status": "potential",
+        "suggested_status": "rejected",
+        "reasoning_summary": "Proposta controlada da fixture, sujeita aos critérios independentes.",
+        "evidence_refs": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ],
+        "contradictions": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "ai",
+        "fallback_reason": null
+      },
+      "revision": {
+        "revision_id": "revision-69993adaa3ab48409f0eff605d4b1c55",
+        "subject_id": "20261113T055940Z-8a1a59ce:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "version": 1,
+        "previous_status": "potential",
+        "proposed_status": "rejected",
+        "approved_status": "rejected",
+        "accepted": true,
+        "reason": "Critérios independentes permitem a classificação proposta.",
+        "decision_source": "deterministic",
+        "evidence_refs": [
+          "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a"
+        ],
+        "evidence_fingerprint": "be2bb6bc3cc4a1c00381f486a5f2b1384948e10208dda2daf5876fa865c4f6d5",
+        "validation_id": "ev-15ac3c3fb99e471bb1f5df67880ae45e",
+        "reflection_id": "reflection-d061e7c52c954520bb0762dd7e22e86e",
+        "proposal_source": "ai",
+        "created_at": "2026-11-13T05:59:41.475425+00:00"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-0722ee535eb840e0b0ceb148b08d8d7a",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "Angular",
+          "version": "14.0.0",
+          "certainty": "exact",
+          "summary": "Correspondência local de versão; aplicabilidade no alvo não validada",
+          "campaign_id": "20261113T055940Z-8a1a59ce",
+          "hypothesis_id": "20261113T055940Z-8a1a59ce:tech:@angular/core:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-0722ee535eb840e0b0ceb148b08d8d7a",
+          "worker_id": "lab-959addfb9c2247e3ae63c175455d2993",
+          "operation_id": "correlate_local_version",
+          "validation_status": "contradicted",
+          "input_evidence_refs": [
+            "20261113T055940Z-8a1a59ce:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "@angular/core",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "14.0.0"
+            }
+          ],
+          "sha256": "a2513da4c2d554ad3121c024a4a0fd59fda949ccebcf70f61d80ef28864d3b94",
+          "created_at": "2026-11-13T05:59:41.465724+00:00",
+          "normalized_name": "@angular/core",
+          "ecosystem": "npm"
+        }
+      ]
+    },
+    {
+      "scenario": "inconclusive",
+      "campaign_id": "20261113T055941Z-e4460e4c",
+      "hypothesis_id": "20261113T055941Z-e4460e4c:tech:angular:CVE-2099-6501",
+      "initial_status": "inconclusive",
+      "current_status": "inconclusive",
+      "checkpoint_integrity_verified": true,
+      "checkpoint_matches_api": true,
+      "execution": {
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-5c1d733f115b49dd8909dab60e929efb",
+        "worker_id": "lab-b98ae7339c204e7088b40d3a4f1d2158",
+        "execution_backend": "docker",
+        "execution_status": "completed",
+        "validation_status": "inconclusive",
+        "worker_responded": true,
+        "authorization_status": "approved",
+        "output_evidence_refs": [
+          "evidence:exec-5c1d733f115b49dd8909dab60e929efb"
+        ]
+      },
+      "evidence_validation": {
+        "validation_id": "ev-dcdd48961eea414da1badd0f71ea2447",
+        "subject_id": "20261113T055941Z-e4460e4c:tech:angular:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "status": "insufficient_evidence",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "fe82b9f3003d7a4ad5a3b1a1e244339493addeb8c09f0b19a80988ea2b67c60c",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [
+          "evidence:exec-5c1d733f115b49dd8909dab60e929efb"
+        ],
+        "validation_rules": [
+          "legacy_unhashed_context",
+          "criterion_insufficient"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T05:59:42.619363+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-72718408ad88440f9f57aa6caf0c595b",
+        "subject_id": "20261113T055941Z-e4460e4c:tech:angular:CVE-2099-6501",
+        "original_status": "inconclusive",
+        "suggested_status": "confirmed",
+        "reasoning_summary": "Proposta controlada da fixture, sujeita aos critérios independentes.",
+        "evidence_refs": [
+          "evidence:exec-5c1d733f115b49dd8909dab60e929efb"
+        ],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "ai",
+        "fallback_reason": null
+      },
+      "revision": {
+        "revision_id": "revision-920259a8e65e4bf8b02f9028a15b25ef",
+        "subject_id": "20261113T055941Z-e4460e4c:tech:angular:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "version": 1,
+        "previous_status": "inconclusive",
+        "proposed_status": "confirmed",
+        "approved_status": "inconclusive",
+        "accepted": false,
+        "reason": "Proposta não sustentada pelos critérios determinísticos; confirmação indevida bloqueada.",
+        "decision_source": "deterministic",
+        "evidence_refs": [
+          "evidence:exec-5c1d733f115b49dd8909dab60e929efb"
+        ],
+        "evidence_fingerprint": "fe82b9f3003d7a4ad5a3b1a1e244339493addeb8c09f0b19a80988ea2b67c60c",
+        "validation_id": "ev-dcdd48961eea414da1badd0f71ea2447",
+        "reflection_id": "reflection-72718408ad88440f9f57aa6caf0c595b",
+        "proposal_source": "ai",
+        "created_at": "2026-11-13T05:59:42.619900+00:00"
+      },
+      "output_evidence": [
+        {
+          "evidence_id": "evidence:exec-5c1d733f115b49dd8909dab60e929efb",
+          "title": "Resultado da verificação local",
+          "source": "laboratory",
+          "technology": "AngularJS",
+          "version": null,
+          "certainty": "partial",
+          "summary": "Identidade ou intervalo insuficiente",
+          "campaign_id": "20261113T055941Z-e4460e4c",
+          "hypothesis_id": "20261113T055941Z-e4460e4c:tech:angular:CVE-2099-6501",
+          "task_id": "laboratory_validation",
+          "execution_id": "exec-5c1d733f115b49dd8909dab60e929efb",
+          "worker_id": "lab-b98ae7339c204e7088b40d3a4f1d2158",
+          "operation_id": "correlate_local_version",
+          "validation_status": "inconclusive",
+          "input_evidence_refs": [
+            "20261113T055941Z-e4460e4c:framework_inventory"
+          ],
+          "vulnerability_id": "CVE-2099-6501",
+          "source_refs": [
+            "fixture-local"
+          ],
+          "criteria": [
+            {
+              "product": "angular",
+              "ecosystem": "npm",
+              "introduced": "13.0.0",
+              "fixed": "15.0.0"
+            }
+          ],
+          "sha256": "c14aa8a1f0cec9b816970d2c8bc34b67f39cb0d550a45753f350f7350035c877",
+          "created_at": "2026-11-13T05:59:42.609984+00:00",
+          "normalized_name": "angular",
+          "ecosystem": "npm"
+        }
+      ]
+    },
+    {
+      "scenario": "failed",
+      "campaign_id": "20261113T055942Z-dd71ffd7",
+      "hypothesis_id": "20261113T055942Z-dd71ffd7:tech:@angular/core:CVE-2099-6501",
+      "initial_status": "potential",
+      "current_status": "inconclusive",
+      "checkpoint_integrity_verified": true,
+      "checkpoint_matches_api": true,
+      "execution": {
+        "task_id": "laboratory_validation",
+        "execution_id": "exec-1beb7526f1834fb7af66aad90184e8ab",
+        "worker_id": "lab-bb3a6220025a484eae8cf5c15d427c23",
+        "execution_backend": "docker",
+        "execution_status": "failed",
+        "validation_status": "not_evaluated",
+        "worker_responded": true,
+        "authorization_status": "approved",
+        "output_evidence_refs": []
+      },
+      "evidence_validation": {
+        "validation_id": "ev-ee8adbaca73c48c7970aa66321ce2d00",
+        "subject_id": "20261113T055942Z-dd71ffd7:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "status": "insufficient_evidence",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "9147a71ee22d79750c2957d56800d143870a12050249d1d5fd24b50164bb6ac6",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T05:59:43.750210+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-67a176f3bf404443880c916565e540cf",
+        "subject_id": "20261113T055942Z-dd71ffd7:tech:@angular/core:CVE-2099-6501",
+        "original_status": "potential",
+        "suggested_status": "inconclusive",
+        "reasoning_summary": "Proposta controlada da fixture, sujeita aos critérios independentes.",
+        "evidence_refs": [],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "ai",
+        "fallback_reason": null
+      },
+      "revision": {
+        "revision_id": "revision-041d6cd63daa4f8ca9f32a938b4afce3",
+        "subject_id": "20261113T055942Z-dd71ffd7:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "version": 1,
+        "previous_status": "potential",
+        "proposed_status": "inconclusive",
+        "approved_status": "inconclusive",
+        "accepted": true,
+        "reason": "Critérios independentes permitem a classificação proposta.",
+        "decision_source": "deterministic",
+        "evidence_refs": [],
+        "evidence_fingerprint": "9147a71ee22d79750c2957d56800d143870a12050249d1d5fd24b50164bb6ac6",
+        "validation_id": "ev-ee8adbaca73c48c7970aa66321ce2d00",
+        "reflection_id": "reflection-67a176f3bf404443880c916565e540cf",
+        "proposal_source": "ai",
+        "created_at": "2026-11-13T05:59:43.750637+00:00"
+      },
+      "output_evidence": []
+    },
+    {
+      "scenario": "unverified",
+      "campaign_id": "20261113T055943Z-960cd3a5",
+      "hypothesis_id": "20261113T055943Z-960cd3a5:tech:@angular/core:CVE-2099-6501",
+      "initial_status": "potential",
+      "current_status": "inconclusive",
+      "checkpoint_integrity_verified": true,
+      "checkpoint_matches_api": true,
+      "execution": null,
+      "evidence_validation": {
+        "validation_id": "ev-5bee065c2d4e4f17bfa86baf08313550",
+        "subject_id": "20261113T055943Z-960cd3a5:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "status": "insufficient_evidence",
+        "integrity_status": "partial",
+        "evidence_fingerprint": "168b643e102db57b9c44ce82a21c525a674e0dd28039715a109f1f8c9dc676b5",
+        "supporting_evidence_refs": [],
+        "contradicting_evidence_refs": [],
+        "missing_evidence_refs": [],
+        "invalid_evidence_refs": [],
+        "valid_evidence_refs": [],
+        "validation_rules": [
+          "legacy_unhashed_context"
+        ],
+        "limitations": [
+          "Integridade não autentica a origem nem confirma exploração no alvo.",
+          "Referências ausentes ou metadados históricos sem hash não constituem prova independente.",
+          "Correlação de versão é local; hipótese não se torna finding confirmado."
+        ],
+        "sufficient_for_confirmation": false,
+        "created_at": "2026-11-13T05:59:43.911522+00:00"
+      },
+      "reflection": {
+        "reflection_id": "reflection-baabae8ee9d44cf2ac8a639a3b32fbe5",
+        "subject_id": "20261113T055943Z-960cd3a5:tech:@angular/core:CVE-2099-6501",
+        "original_status": "potential",
+        "suggested_status": "inconclusive",
+        "reasoning_summary": "Proposta controlada da fixture, sujeita aos critérios independentes.",
+        "evidence_refs": [],
+        "contradictions": [],
+        "missing_information": [],
+        "recommended_action": "none",
+        "recommended_task_id": null,
+        "decision_source": "ai",
+        "fallback_reason": null
+      },
+      "revision": {
+        "revision_id": "revision-13d35646828347e9a5b104f0c55edbe5",
+        "subject_id": "20261113T055943Z-960cd3a5:tech:@angular/core:CVE-2099-6501",
+        "subject_type": "hypothesis",
+        "version": 1,
+        "previous_status": "potential",
+        "proposed_status": "inconclusive",
+        "approved_status": "inconclusive",
+        "accepted": true,
+        "reason": "Critérios independentes permitem a classificação proposta.",
+        "decision_source": "deterministic",
+        "evidence_refs": [],
+        "evidence_fingerprint": "168b643e102db57b9c44ce82a21c525a674e0dd28039715a109f1f8c9dc676b5",
+        "validation_id": "ev-5bee065c2d4e4f17bfa86baf08313550",
+        "reflection_id": "reflection-baabae8ee9d44cf2ac8a639a3b32fbe5",
+        "proposal_source": "ai",
+        "created_at": "2026-11-13T05:59:43.911924+00:00"
+      },
+      "output_evidence": []
+    }
+  ],
+  "limitations": [
+    "Local CVE correlation does not confirm vulnerability or exploitation on the target.",
+    "Direct finding confirmation currently covers recorded HTTP header criteria; insufficient categories remain inconclusive.",
+    "Task recommendations are recorded for later review; no dynamic DAG insertion or automatic replay.",
+    "Provider adapters tested with mocks; no paid/external model API requests were made.",
+    "Record hashes do not authenticate advisory origin.",
+    "Raw artifacts in /tmp may be removed by normal host cleanup."
+  ],
+  "phase8_started": false
+}

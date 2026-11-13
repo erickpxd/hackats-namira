@@ -1,10 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
 import {
   Activity, ArrowDownToLine, ArrowLeft, ArrowRight, ArrowUpRight,
   CircleHelp, Eye, EyeOff, FileText, LoaderCircle, ScanLine,
-  Search as SearchIcon, Settings as SettingsIcon, ShieldAlert, X,
+  Settings as SettingsIcon, ShieldAlert, X,
 } from "lucide-react";
+import AgentPipeline from "./components/ui/ai-agent-pipeline";
+import XaiPanel from "./components/ui/xai-panel";
+import ExecutionHistory from "./components/ui/execution-history";
+import ConclusionReview from "./components/ui/conclusion-review";
+import AssessmentStatus, { assessmentLabel } from "./components/ui/assessment-status";
 import "./styles.css";
 
 const STATUS_LABELS = {
@@ -64,16 +70,16 @@ const INSIGHT_TYPES = new Set([
 ]);
 
 const PAGES = [
-  ["home", "Nova pesquisa", "01"],
+  ["home", "Início", "01"],
   ["research", "Acompanhamento", "02"],
   ["findings", "Achados", "03"],
+  ["executions", "Verificações e hipóteses", ""],
   ["reports", "Relatórios", "04"],
-  ["settings", "Configurações de IA", "05"],
-  ["scope", "Escopo e limites", "06"],
+  ["settings", "Configuração do projeto", "05"],
   ["test", "Teste salvo", ""],
 ];
 
-const PAGE_ICONS = { home: SearchIcon, research: Activity, findings: ShieldAlert, reports: FileText, settings: SettingsIcon, scope: ScanLine };
+const PAGE_ICONS = { home: ScanLine, research: Activity, findings: ShieldAlert, reports: FileText, settings: SettingsIcon };
 
 const SEVERITY_LABELS = { critical: "Crítica", high: "Alta", medium: "Média", low: "Baixa", info: "Informativa" };
 const FINDING_STATES = { confirmed: "Observação confirmada", inconclusive: "Inconclusivo", discarded: "Descartado" };
@@ -81,6 +87,7 @@ const FINDING_STATES = { confirmed: "Observação confirmada", inconclusive: "In
 function currentPage() {
   const page = window.location.hash.slice(1);
   if (/^test\/[A-Za-z0-9][A-Za-z0-9_-]{0,95}$/.test(page)) return "test";
+  if (page === "scope") return "settings";
   return PAGES.some(([id]) => id !== "test" && id === page) ? page : "home";
 }
 
@@ -98,7 +105,7 @@ async function getJson(path, signal) {
   return data;
 }
 
-function SettingsModal({ children, onClose }) {
+function SettingsModal({ children, onClose, pendingScan = false }) {
   const dialog = useRef(null);
   useEffect(() => {
     const element = dialog.current;
@@ -129,13 +136,15 @@ function SettingsModal({ children, onClose }) {
           <button type="button" className="modal-close" aria-label="Fechar configurações" onClick={onClose}><X size={20} aria-hidden="true" /></button>
         </header>
         {children}
-        <button type="button" className="settings-done" onClick={onClose}>Concluir configurações</button>
+        <button type="button" className="settings-done" onClick={onClose}>
+          {pendingScan ? "Salvar e iniciar varredura" : "Concluir configurações"}
+        </button>
       </div>
     </dialog>
   );
 }
 
-function ConsoleLayout({ view, state, connected, children }) {
+function ConsoleLayout({ view, state, assessment, connected, onNewSearch, children }) {
   return (
     <div className={`console-layout ${view === "home" ? "focused-home" : ""}`}>
       <a className="skip-link" href="#page-content" onClick={(event) => {
@@ -143,14 +152,13 @@ function ConsoleLayout({ view, state, connected, children }) {
         document.getElementById("page-content")?.focus();
       }}>Pular para o conteúdo</a>
       <aside className="sidebar">
-        <a className="brand" href="#home" aria-label="Hubbits, página inicial">
-          <span className="brand-mark"><BrandGlyph /></span>
-          <span className="brand-name">HUBBITS<small>CONSOLE DE PESQUISA</small></span>
+        <a className="brand brand-logo" href="#home" aria-label="NA MIRA, página inicial">
+          <img className="brand-logo-img" src="/images/logo-horizontal.png" alt="NA MIRA" />
         </a>
         <p className="nav-label">Área de trabalho</p>
         <nav className="main-nav" aria-label="Navegação principal">
-          {PAGES.filter(([id]) => id !== "test").map(([id, label]) => {
-            const Icon = PAGE_ICONS[id];
+          {PAGES.filter(([id]) => !["home", "test"].includes(id)).map(([id, label]) => {
+            const Icon = PAGE_ICONS[id] || Activity;
             return (
             <a key={id} href={`#${id}`} aria-current={view === id ? "page" : undefined}>
               <span aria-hidden="true"><Icon size={16} /></span>{label}
@@ -165,11 +173,20 @@ function ConsoleLayout({ view, state, connected, children }) {
       </aside>
       <div className="workspace">
         {view !== "home" && <header className="workspace-header">
-          <span>{PAGES.find(([id]) => id === view)?.[1]}</span>
           <span className={`status-pill status-${connected ? state : "failed"}`}>
             <span className="status-dot" />
-            {connected ? STATUS_LABELS[state] || state : "API desconectada"}
+            {connected ? (state === "completed" && assessment && assessment !== "complete"
+              ? `Execução encerrada · análise ${assessmentLabel(assessment).toLowerCase()}` : STATUS_LABELS[state] || state) : "API desconectada"}
           </span>
+          <div className="workspace-header-actions">
+            <a className="header-new-scan" href="#home" onClick={(event) => {
+              event.preventDefault();
+              onNewSearch();
+            }}>
+              <ScanLine size={16} aria-hidden="true" />
+              Nova varredura
+            </a>
+          </div>
         </header>}
         <div id="page-content" className="page-transition" key={view} tabIndex={-1}>{children}</div>
       </div>
@@ -368,8 +385,48 @@ function Insight({ event }) {
   );
 }
 
+function SplashScreen({ onDone }) {
+  const [leaving, setLeaving] = useState(false);
+  const finish = useCallback(() => setLeaving(true), []);
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const wasLocked = root.classList.contains("splash-active");
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    root.classList.add("splash-active");
+    return () => {
+      if (!wasLocked) {
+        root.classList.remove("splash-active");
+        window.scrollTo(scrollX, scrollY);
+      }
+    };
+  }, []);
+  useEffect(() => {
+    // Fallback: se o vídeo não disparar/terminar, encerra sozinho.
+    const timer = window.setTimeout(finish, 9000);
+    return () => window.clearTimeout(timer);
+  }, [finish]);
+  useEffect(() => {
+    if (!leaving) return;
+    const timer = window.setTimeout(onDone, 480);
+    return () => window.clearTimeout(timer);
+  }, [leaving, onDone]);
+  // Fora da transição da página: um ancestral com transform prende position: fixed ao conteúdo.
+  return createPortal(
+    <div className={`splash${leaving ? " splash-leaving" : ""}`} role="presentation"
+      onClick={finish}>
+      <video className="splash-video" src="/video/splash.mp4"
+        autoPlay muted playsInline preload="auto"
+        onEnded={finish} onError={finish} />
+      <button type="button" className="splash-skip" onClick={finish}>Pular</button>
+    </div>,
+    document.body,
+  );
+}
+
 function App() {
   const { snapshot, connectionError, refresh } = useConsoleSnapshot();
+  const [selectedPhase, setSelectedPhase] = useState(null);
   const [target, setTarget] = useState("");
   const [activeTarget, setActiveTarget] = useState("");
   const [view, setView] = useState(currentPage);
@@ -383,6 +440,9 @@ function App() {
   const [severityFilter, setSeverityFilter] = useState("all");
   const [eventFilter, setEventFilter] = useState("all");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [pendingScan, setPendingScan] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const dismissSplash = useCallback(() => setShowSplash(false), []);
   const [history, setHistory] = useState(null);
   const [historyError, setHistoryError] = useState("");
   const [historyAttempt, setHistoryAttempt] = useState(0);
@@ -413,12 +473,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    document.title = `Hubbits · ${PAGES.find(([id]) => id === view)?.[1]}`;
+    const pageTitle = view === "home" ? "Análise de segurança com IA" : PAGES.find(([id]) => id === view)?.[1];
+    document.title = `NA MIRA | ${pageTitle || "Análise de segurança com IA"}`;
   }, [view]);
 
   const reviewing = view === "test";
   const scope = snapshot?.scope || {};
   const result = (reviewing ? savedResult : snapshot?.result) || {};
+  const observability = reviewing ? result.observability : snapshot?.observability;
   const events = reviewing ? result.actions || [] : snapshot?.events?.length
     ? snapshot.events
     : result.actions || [];
@@ -465,7 +527,7 @@ function App() {
     setSavedResult(null);
     setSavedError("");
     getJson(`/api/history/${encodeURIComponent(savedRunId)}`, controller.signal)
-      .then((data) => { if (!controller.signal.aborted) setSavedResult(data.result); })
+      .then((data) => { if (!controller.signal.aborted) setSavedResult({...data.result, observability: data.observability, executions: data.executions, hypotheses: data.hypotheses, evidence_catalog: data.evidence_catalog, conclusions: data.conclusions, verification_summary: data.verification_summary}); })
       .catch((error) => {
         if (!controller.signal.aborted) setSavedError(error.message || "Não foi possível abrir o teste.");
       });
@@ -493,6 +555,17 @@ function App() {
     }
   }, [snapshot?.running, snapshot?.scope?.target]);
 
+  useEffect(() => {
+    if (view !== "research" || !running) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("pipeline-title")?.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [view, running]);
+
   const perform = async (action) => {
     setBusy(true);
     setNotice("");
@@ -507,6 +580,7 @@ function App() {
       setNotice(message);
       setNoticeError(true);
       if (message.toLowerCase().includes("chave openai")) {
+        setPendingScan(true);
         setSettingsOpen(true);
       }
       return false;
@@ -515,17 +589,9 @@ function App() {
     }
   };
 
-  const startCampaign = async (event, confirmAuthorization = true) => {
-    event.preventDefault();
+  const startCampaign = async (event) => {
+    if (event?.preventDefault) event.preventDefault();
     const requestedTarget = target.trim();
-    if (
-      confirmAuthorization &&
-      !window.confirm(
-        `Confirma que possui autorização para pesquisar este alvo?\n\n${requestedTarget}`,
-      )
-    ) {
-      return;
-    }
     setActiveTarget(requestedTarget);
     setNotice("");
     const started = await perform(() =>
@@ -540,8 +606,21 @@ function App() {
     );
     if (started) {
       setApiKey("");
+      setPendingScan(false);
       setSettingsOpen(false);
       navigate("research");
+    }
+  };
+
+  // Ao fechar as configurações: se a varredura ficou pendente por falta de
+  // chave e a chave foi preenchida, retoma a varredura e vai para a análise.
+  const closeSettings = () => {
+    setSettingsOpen(false);
+    if (pendingScan && apiKey.trim()) {
+      setPendingScan(false);
+      startCampaign();
+    } else {
+      setPendingScan(false);
     }
   };
 
@@ -570,34 +649,50 @@ function App() {
       region={region} setRegion={setRegion} disabled={busy || Boolean(snapshot?.running) || !snapshot} />
   );
   const layout = (content) => (
-    <ConsoleLayout view={view} state={state} connected={Boolean(snapshot) && !connectionError}>
+    <ConsoleLayout view={view} state={state} assessment={observability?.assessment_status || result.assessment_status} connected={Boolean(snapshot) && !connectionError} onNewSearch={returnHome}>
       {connectionError && <div className="message error global-message" role="alert">{connectionError} Verifique o servidor local.</div>}
       {snapshot?.error && <div className="message error global-message" role="alert">{snapshot.error}</div>}
       {notice && <div className={`message global-message ${noticeError ? "error" : "success"}`} role={noticeError ? "alert" : "status"}>{notice}</div>}
       {approvals.length > 0 && view !== "research" && <a className="approval-link" href="#research">{approvals.length} aprovação(ões) pendente(s). Revisar no acompanhamento <ArrowRight className="inline-icon" aria-hidden="true" /></a>}
+      {view !== "home" && result.run_id && <AssessmentStatus execution={running ? "running" : observability?.execution_status || result.execution_status || state}
+        assessment={observability?.assessment_status || result.assessment_status} demo={result.demo} />}
       {content}
-      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)}>{aiSettings}</SettingsModal>}
+      {settingsOpen && <SettingsModal onClose={closeSettings} pendingScan={pendingScan}>{aiSettings}</SettingsModal>}
+      {showSplash && <SplashScreen onDone={dismissSplash} />}
     </ConsoleLayout>
   );
 
-  if (["settings", "scope", "reports"].includes(view)) {
+  if (["settings", "reports"].includes(view)) {
     return layout(
       <main className="content-page">
-        <p className="eyebrow">{view === "settings" ? "Sua próxima pesquisa" : "Transparência da campanha"}</p>
-        <h1>{view === "settings" ? "Escolha como analisar." : view === "scope" ? "O escopo vem primeiro." : "Da evidência ao relatório."}</h1>
-        <p className="page-description">{view === "settings" ? "Configure o provedor sem perder o alvo ou os resultados atuais." : view === "scope" ? "Limites informados pela API. A navegação não altera as regras do servidor." : "Exporte os dados registrados, incluindo limitações e recomendações."}</p>
-        {view === "settings" && <section className="settings-panel">{aiSettings}<a className="primary-link" href="#home">Voltar à pesquisa <ArrowRight className="inline-icon" aria-hidden="true" /></a></section>}
-        {view === "scope" && <>
-          <dl className="scope-grid">
-            <div><dt>Alvo configurado</dt><dd>{scope.target || "Aguardando API"}</dd></div>
-            <div><dt>Orçamento de requisições</dt><dd>{scope.max_requests ?? "Não informado"}</dd></div>
-            <div><dt>Intervalo mínimo</dt><dd>{scope.min_interval_seconds != null ? `${scope.min_interval_seconds} s` : "Não informado"}</dd></div>
-            <div><dt>Métodos permitidos</dt><dd>{scope.allowed_methods?.join(", ") || "Não informado"}</dd></div>
-            <div><dt>Timeout</dt><dd>{scope.timeout_seconds != null ? `${scope.timeout_seconds} s` : "Não informado"}</dd></div>
-            <div><dt>Limite por resposta</dt><dd>{scope.max_response_bytes != null ? `${scope.max_response_bytes} bytes` : "Não informado"}</dd></div>
-          </dl>
-          <div className="info-panel"><h2>Autorização não é opcional</h2><p>Use somente URLs HTTPS públicas que você tem autorização para avaliar. A IA orienta a análise; não confirma exploração nem amplia o escopo.</p></div>
-        </>}
+        <p className="eyebrow">{view === "settings" ? "Preparação da varredura" : "Transparência da campanha"}</p>
+        <h1>{view === "settings" ? "Configuração do projeto." : "Da evidência ao relatório."}</h1>
+        <p className="page-description">{view === "settings" ? "Defina como o agente trabalha e confira todos os limites de segurança antes de iniciar uma varredura." : "Exporte os dados registrados, incluindo limitações e recomendações."}</p>
+        {view === "settings" && <div className="project-config-stack">
+          <section className="settings-panel project-config-section">
+            <header className="project-section-heading">
+              <span aria-hidden="true">01</span>
+              <div><h2>Inteligência artificial</h2><p>Escolha o provedor e o modelo usados para planejar a análise e organizar as evidências. A IA não altera o alvo nem os limites abaixo.</p></div>
+            </header>
+            {aiSettings}
+          </section>
+          <section className="project-config-section scope-settings-panel">
+            <header className="project-section-heading">
+              <span aria-hidden="true">02</span>
+              <div><h2>Escopo e limites</h2><p>Estas regras vêm da API e protegem o alvo contra uma execução ampla demais. Elas são apenas informativas nesta tela.</p></div>
+            </header>
+            <dl className="scope-grid">
+              <div><dt>Alvo configurado</dt><dd>{scope.target || "Aguardando API"}</dd><small>Origem HTTPS autorizada para a próxima execução.</small></div>
+              <div><dt>Orçamento de requisições</dt><dd>{scope.max_requests ?? "Não informado"}</dd><small>Total máximo de chamadas que a campanha pode realizar.</small></div>
+              <div><dt>Intervalo mínimo</dt><dd>{scope.min_interval_seconds != null ? `${scope.min_interval_seconds} s` : "Não informado"}</dd><small>Pausa obrigatória entre chamadas para reduzir impacto no alvo.</small></div>
+              <div><dt>Métodos permitidos</dt><dd>{scope.allowed_methods?.join(", ") || "Não informado"}</dd><small>Somente métodos de leitura, sem alterar dados do sistema avaliado.</small></div>
+              <div><dt>Tempo limite</dt><dd>{scope.timeout_seconds != null ? `${scope.timeout_seconds} s` : "Não informado"}</dd><small>Espera máxima por cada resposta antes de seguir o fluxo.</small></div>
+              <div><dt>Limite por resposta</dt><dd>{scope.max_response_bytes != null ? `${scope.max_response_bytes} bytes` : "Não informado"}</dd><small>Quantidade máxima de conteúdo lida em uma única resposta.</small></div>
+            </dl>
+            <div className="info-panel"><h2>Autorização não é opcional</h2><p>Use somente URLs HTTPS públicas que você tem autorização para avaliar. A IA orienta a análise; não confirma exploração nem amplia o escopo.</p></div>
+          </section>
+          <a className="primary-link" href="#home">Preparar nova varredura <ArrowRight className="inline-icon" aria-hidden="true" /></a>
+        </div>}
         {view === "reports" && <>
           <div className="summary-grid">
             <div><span>Estado da campanha</span><strong>{STATUS_LABELS[state] || state}</strong></div>
@@ -617,6 +712,9 @@ function App() {
     );
   }
 
+  if (view === "executions") {
+    return layout(<main className="content-page"><ExecutionHistory executions={snapshot?.executions} hypotheses={snapshot?.hypotheses} evidenceCatalog={snapshot?.evidence_catalog} conclusions={snapshot?.conclusions} verificationSummary={snapshot?.verification_summary} /></main>);
+  }
   if (view === "home") {
     return layout(
       <main className="home search-home">
@@ -653,10 +751,10 @@ function App() {
               <button
                 type="submit"
                 className="search-submit"
-                aria-label="Pesquisar URL"
+                aria-label="Iniciar varredura"
                 disabled={busy || running || !snapshot}
               >
-                {busy ? <LoaderCircle className="icon-spinner" aria-hidden="true" /> : <SearchIcon aria-hidden="true" />}
+                {busy ? <LoaderCircle className="icon-spinner" aria-hidden="true" /> : <ScanLine aria-hidden="true" />}
               </button>
             </div>
           </form>
@@ -671,8 +769,9 @@ function App() {
                 {history.runs.length ? <div className="history-grid">
                   {history.runs.slice(0, historyLimit).map((run) => (
                     <a className="history-tile" href={`#test/${run.run_id}`} key={run.run_id} title={run.target}>
-                      <span className={`history-state status-${run.status}`}><span className="status-dot" />{STATUS_LABELS[run.status] || run.status}</span>
-                      <strong>{run.target}</strong>
+                      <span className={`history-state status-${run.status}`}><span className="status-dot" />{run.assessment_status && run.assessment_status !== "complete" ? `Análise ${assessmentLabel(run.assessment_status).toLowerCase()}` : STATUS_LABELS[run.status] || run.status}</span>
+                      <strong>{run.demo ? run.campaign_name : run.target}</strong>
+                      {run.demo && <small>Demonstração · Docker real · fixtures locais</small>}
                       <span>{formatDate(run.started_at)}</span>
                       <span className="history-tile-footer">{run.findings_count} achado(s)<span aria-hidden="true"><ArrowUpRight size={16} /></span></span>
                     </a>
@@ -696,15 +795,20 @@ function App() {
   return layout(
     <main className="research-page">
       {reviewing && <a className="back-history" href="#home"><ArrowLeft className="inline-icon" aria-hidden="true" /> Histórico de pesquisas</a>}
+      {reviewing && result.demo && <section className="info-panel"><h2>{result.campaign_name}</h2>
+        <p>Três hipóteses de fixtures, diagnóstico real do Docker e controle de autorização. Abra as verificações abaixo para consultar stdout, stderr e revisões.</p>
+        <a href={`/api/history/${encodeURIComponent(result.run_id)}/report.md`}>Baixar relatório da demonstração <ArrowDownToLine className="inline-icon" /></a>
+      </section>}
+      {reviewing && <details><summary>Verificações e hipóteses desta campanha</summary><ExecutionHistory executions={result.executions} hypotheses={result.hypotheses} evidenceCatalog={result.evidence_catalog} conclusions={result.conclusions} verificationSummary={result.verification_summary} /></details>}
       <section className="research-intro">
         <div>
           <p className="eyebrow">
             {reviewing ? `Teste salvo · ${formatDate(result.started_at)}` : running ? "Pesquisa em andamento" : "Resultados da pesquisa"}
           </p>
-          <h1>{view === "findings" ? "Evidências para revisar." : running ? "Insights em tempo real" : "Insights da pesquisa"}</h1>
+          <h1>{view === "findings" ? "Evidências para revisar." : running ? "Acompanhe cada etapa." : "Pipeline da pesquisa."}</h1>
           <p className="target-label">{displayTarget || "URL não informada"}</p>
         </div>
-        {running ? (
+        {running && (
           <button
             className="stop-button"
             type="button"
@@ -712,14 +816,6 @@ function App() {
             disabled={busy || snapshot?.stop_requested}
           >
             {snapshot?.stop_requested ? "Parada solicitada" : "Parar pesquisa"}
-          </button>
-        ) : (
-          <button
-            className="new-search-button"
-            type="button"
-            onClick={returnHome}
-          >
-            Nova pesquisa
           </button>
         )}
       </section>
@@ -735,13 +831,32 @@ function App() {
         <span>{reviewing ? "Registro histórico · não envia novas requisições" : "Atualização automática a cada 1,5 s"}</span>
       </div>
 
-      <section className="classification-summary" aria-label="Classificação dos achados">
-        {Object.entries(SEVERITY_LABELS).map(([severity, label]) => (
-          <div key={severity}><span className={`severity ${severity}`}>{label}</span>
-            <strong>{classified.filter((item) => item.severity?.toLowerCase() === severity).length}</strong></div>
-        ))}
-        <p>{running ? "Classificações recebidas da triagem. Novos registros aparecem no topo." : "A classificação indica a prioridade de revisão, não prova exploração."}</p>
-      </section>
+      {(view === "research" || reviewing) && (
+        <>
+          <AgentPipeline events={events} running={running} state={state}
+            target={displayTarget}
+            maxRequests={result.summary?.scope?.max_requests ?? scope.max_requests}
+            reportAvailable={reviewing || Boolean(snapshot?.report_available)}
+            observability={observability}
+            selectedPhase={selectedPhase}
+            onSelectPhase={(id) => setSelectedPhase((prev) => (prev === id ? null : id))} />
+          {observability?.mode === "v2" && (
+            <XaiPanel observability={observability} events={events} result={result}
+              conclusions={reviewing ? result.conclusions : snapshot?.conclusions}
+              selectedPhase={selectedPhase} onSelect={setSelectedPhase} running={running} />
+          )}
+        </>
+      )}
+
+      {(view === "findings" || reviewing) && (
+        <section className="classification-summary" aria-label="Classificação dos achados">
+          {Object.entries(SEVERITY_LABELS).map(([severity, label]) => (
+            <div key={severity}><span className={`severity ${severity}`}>{label}</span>
+              <strong>{classified.filter((item) => item.severity?.toLowerCase() === severity).length}</strong></div>
+          ))}
+          <p>{running ? "Classificações recebidas da triagem. Novos registros aparecem no topo." : "A classificação indica a prioridade de revisão, não prova exploração."}</p>
+        </section>
+      )}
 
       {approvals.length > 0 && (
         <section className="approval-panel">
@@ -779,14 +894,12 @@ function App() {
         </section>
       )}
 
-      {(view === "research" || reviewing) && <section className="insights-section" aria-live="polite" aria-relevant="additions">
-        <div className="section-title">
-          <div>
-            <p className="eyebrow">Mais recentes primeiro</p>
-            <h2>{running ? "A pesquisa, em tempo real." : "Insights do teste"}</h2>
-          </div>
-          <span className="insight-count">{insightEvents.length}</span>
-        </div>
+      {(view === "research" || reviewing) && <details className="audit-panel">
+        <summary>
+          <span><strong>Log da auditoria</strong><small>Detalhes técnicos, requisições e decisões da campanha</small></span>
+          <span className="audit-summary-meta"><span className="insight-count">{filteredEvents.length}</span><span className="audit-chevron" aria-hidden="true" /></span>
+        </summary>
+        <section className="insights-section audit-content" aria-live="polite" aria-relevant="additions">
         <label className="filter-field">Exibir eventos
           <select value={eventFilter} onChange={(event) => setEventFilter(event.target.value)}>
             <option value="all">Todos os registros</option>
@@ -824,9 +937,10 @@ function App() {
           </div>
         )}
         {filteredEvents.length > eventLimit && <button type="button" className="load-more" onClick={() => setEventLimit((value) => value + 30)}>Mostrar registros anteriores</button>}
-      </section>}
+        </section>
+      </details>}
 
-      {["findings", "research", "test"].includes(view) && (
+      {(view === "findings" || reviewing) && (
         <section className="findings-section">
           <div className="section-title">
             <div>
@@ -852,6 +966,7 @@ function App() {
           <div className="finding-list">
             {[...visibleFindings].reverse().map((finding, index) => (
               <article className="finding-card" key={finding.id || index}>
+                <ConclusionReview compact conclusion={(reviewing ? result.conclusions : snapshot?.conclusions)?.find(c => c.subject_type === 'finding' && c.subject_id === finding.id)} />
                 <div className="finding-heading">
                   <strong>
                     {finding.title ||
@@ -887,7 +1002,7 @@ function App() {
         </section>
       )}
 
-      {["findings", "research", "test"].includes(view) && recommendations.length > 0 && (
+      {(view === "findings" || reviewing) && recommendations.length > 0 && (
         <section className="recommendations">
           <p className="eyebrow">Orientações</p>
           <h2>Próximos passos sugeridos</h2>

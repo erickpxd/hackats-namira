@@ -74,9 +74,9 @@ flowchart LR
   C --> E[Eventos e relatório local]
 ```
 
-O gateway é a única peça que faz requisições. O escopo fixa host, esquema, porta e métodos `GET/HEAD`; o padrão é **6 requisições planejadas**, teto de **8**, intervalo mínimo de **1 s**, limite de corpo e redirecionamentos desligados. O botão de parada sinaliza o executor e a campanha conserva as ações já registradas. A IA recebeu somente achados resumidos e sem corpos; não recebeu ferramenta de rede nem decidiu a severidade. Nesta campanha, `gpt-6-luna` retornou cinco sugestões para revisão humana. `scope.json` pode ser revisado antes de qualquer nova campanha.
+O gateway é a única peça que faz requisições. O escopo fixa host, esquema, porta e métodos `GET/HEAD`; o padrão é **6 requisições planejadas**, teto de **8**, intervalo mínimo de **1 s**, limite de corpo e redirecionamentos desligados. O botão de parada sinaliza o executor e a campanha conserva as ações já registradas. A IA recebeu somente achados resumidos e sem corpos; não recebeu ferramenta de rede nem decidiu a severidade. Nesta campanha, `gpt-6-luna` retornou cinco sugestões para revisão humana. `backend/scope.json` pode ser revisado antes de qualquer nova campanha.
 
-O monitor só compara campanhas completas com mesmo alvo, escopo e hash das regras. Uma alteração no detector exige novo baseline revisado. A comparação visual feita durante o desenvolvimento marcou `/ftp/` como “novo” porque o detector passou a reconhecer o título real do índice; isso **não demonstra mudança no alvo**. O baseline local final é uma cópia integral da [execução publicada](resultado-inicial.json) e fica em `reports/baseline.json`, fora do Git.
+O monitor só compara campanhas completas com mesmo alvo, escopo e hash das regras. Uma alteração no detector exige novo baseline revisado. A comparação visual feita durante o desenvolvimento marcou `/ftp/` como “novo” porque o detector passou a reconhecer o título real do índice; isso **não demonstra mudança no alvo**. O baseline local final é uma cópia integral da [execução publicada](resultado-inicial.json) e fica em `backend/reports/baseline.json`, fora do Git.
 
 ## Limites e evolução
 
@@ -93,7 +93,7 @@ Não há código do alvo para corrigir nesta pasta. Não foram testados autentic
 
 ## Demonstração de até cinco minutos
 
-1. Mostrar o escopo fixo e o orçamento em `scope.json`.
+1. Mostrar o escopo fixo e o orçamento em `backend/scope.json`.
 2. Iniciar a campanha pelo console e acompanhar requisição, evidência e classificação na trilha.
 3. Mostrar os seis achados, as dicas de código e as contagens de dificuldades 1/2.
 4. Demonstrar a interrupção **em servidor local de teste**, para evitar uma campanha extra no alvo ao vivo.

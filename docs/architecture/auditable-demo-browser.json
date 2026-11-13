@@ -1,0 +1,23 @@
+{
+  "mode": "auditable-demo-real-docker-readonly",
+  "passed": 15,
+  "checks": [
+    "real saved API separates execution completion and partial assessment",
+    "four Docker executions linked to actual process capture and cleanup",
+    "fixture reads are not presented as live target responses",
+    "real runtime, non-root identity, system and fixture hash captured",
+    "three distinct comparison outcomes",
+    "independent revision preserves original suspected conclusion",
+    "unknown operation rejected with no worker",
+    "demo provenance and partial completeness visible",
+    "terminal is read-only and collapsed by default",
+    "React shows actual separate process streams",
+    "eight pipeline cards and saved XAI preserve assessment",
+    "saved report matches classification history",
+    "reload preserves execution identities and captured output",
+    "mobile capture has no page overflow",
+    "no browser exceptions"
+  ],
+  "artifacts": "/tmp/namira-phase65-O7o9IW",
+  "campaign_id": "20261113T085045Z-61c83415"
+}

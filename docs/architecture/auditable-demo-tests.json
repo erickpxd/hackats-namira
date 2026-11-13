@@ -1,0 +1,10 @@
+{
+  "command": "PENTEST_DOCKER_IT=1 .venv/bin/python -m unittest discover -s tests -q (cwd backend)",
+  "executed": 348,
+  "passed": 348,
+  "failed": 0,
+  "skipped": 0,
+  "duration_seconds": 13.845,
+  "finished_at": "2026-11-13T08:52:58.941950+00:00",
+  "log": "/tmp/namira-final-unittest.log"
+}

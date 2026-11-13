@@ -1,7 +1,7 @@
 """Gera cenários de /api/status a partir de um result.json real (sem rede).
 
 Uso: python3 -I tools/e2e-web/build_scenarios.py <saida.json> [result.json]
-Sem origem, usa o reports/*/result.json mais recente. Se a origem não tiver evento de
+Sem origem, usa o backend/reports/*/result.json mais recente. Se a origem não tiver evento de
 aprovação 'pending' (ex.: docs/resultado-evidencia-detalhada.json), um evento sintético,
 marcado com "synthetic": true, é inserido após o primeiro teste de superfície.
 Ver docs/PLANO_HANDOFF_FRONTEND.md, tarefa A.
@@ -12,9 +12,9 @@ out = sys.argv[1]
 if len(sys.argv) > 2:
     src = sys.argv[2]
 else:
-    found = sorted(glob.glob("reports/*/result.json"), key=os.path.getmtime)
+    found = sorted(glob.glob("backend/reports/*/result.json"), key=os.path.getmtime)
     if not found:
-        sys.exit("Nenhum reports/*/result.json; informe a origem, ex.: docs/resultado-evidencia-detalhada.json")
+        sys.exit("Nenhum backend/reports/*/result.json; informe a origem, ex.: docs/resultado-evidencia-detalhada.json")
     src = found[-1]
 real = json.load(open(src, encoding="utf-8"))
 acts = real["actions"]
